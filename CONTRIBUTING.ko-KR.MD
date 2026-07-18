@@ -16,6 +16,8 @@
 ### 전제조건
 
 - [Git](https://git-scm.com/)
+- [SystemC](https://systemc.org/)
+- C++23 컴파일러
 
 ### 준비하기
 ```bash
@@ -27,6 +29,23 @@ cd wach
 
 # 3. 주 저장소에서 변경사항을 가져오기 위해 업스트림 원격을 추가합니다
 git remote add upstream https://github.com/BeomjunKim-3p/wach.git
+
+# (Optional). SystemC 설계를 위한 SystemC를 설치합니다(ubuntu 24.04기준).
+sudo apt update
+sudo apt install build-essential cmake
+   ### 의존성 디렉토리가 없는경우
+   mkdir dependencies
+cd dependencies
+wget https://github.com/accellera-official/systemc/archive/refs/tags/3.0.2.tar.gz
+tar -xvzf 3.0.2.tar.gz
+cd systemc-3.0.2
+cmake -S . -B build -DCMAKE_INSTALL_PREFIX=./build/install -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_STANDARD_REQUIRED=ON
+cd build
+make -j$(nproc)
+make install
+# SystemC 경로설정
+export SYSTEMC_HOME=<당신의 프로젝트 경로>/dependencies/systemc-3.0.2/build/install
+export LD_LIBRARY_PATH=$SYSTEMC_HOME/lib:$LD_LIBRARY_PATH
 ```
 
 이제 기여를 시작할 준비가 끝났습니다.
@@ -56,12 +75,12 @@ git checkout -b feature/your-feature-name
 - develop브랜치 (설계 및 기능구현 중심)
   - 주요 작업: 아키텍쳐 변경 및 모듈 추가
   - feature 브랜치: 단계별로 생성하기보다 모듈 단위로 생성합니다.
-    - 예) ```feature/alu/docs``` 설계 후 develop에 병합
+    - 예) ```feature/arch1/alu/docs``` 설계 후 develop에 병합
 
-    - 예) ```feature/alu/systemc``` 구현 -> 검증 후 develop에 병합
-    - 예) ```feature/alu/rtl```구현 -> 검증 후 develop에 병합
+    - 예) ```feature/arch1/alu/systemc``` 구현 -> 검증 후 develop에 병합
+    - 예) ```feature/arch1/alu/rtl```구현 -> 검증 후 develop에 병합
   - release 브랜치: 저수준 단계 검증 및 튜
-    - 예) ```feature/alu/spice```구현 -> 검증 후 develop에 병합
+    - 예) ```feature/arch1/alu/spice```구현 -> 검증 후 develop에 병합
   - main 브랜치: 최종 검증 완료
     - 기능 검증. 타이밍 검증, 전기적 검정 종료 후 제작 가능하고 문제가 발생하지 않는 상태일떄, main브랜치에 병합하고 버전을 올린다
 
@@ -76,12 +95,12 @@ git checkout -b feature/your-feature-name
 ```
 /
 ├─ 아키텍쳐1 이름/          # 각 아키텍쳐의 시작입니다.
-│  ├─ {I/M/A/F/D/C/B/V}/    # 아키텍쳐 내부 모듈입니다.
+│  ├─ {아키텍쳐1 이름{모듈명 (예: i/m/a/f/d/c/b/v}/    # 아키텍쳐 내부 모듈입니다.
 │  │   ├─ docs/             # 아키텍쳐의 isa 설계, cpu내부 구조 설계 등 설계문서와 기타 문서가 들어갑니다.
 │  │   ├─ sim_systemc/      # SystemC를 이용해 설계한 아키텍쳐를 검증하는 곳입니다.
 │  │   ├─ rtl_Sverilog/     # SystemVerilog를 이용해 합성 가능한 RTL을 설계합니다.
 │  │   └─ sim_spice/        # 합성 된 로직게이트들을 실제로 배치해보고 제대로 작동하는지 검증합니다.
-│  └─ {I/M/A/F/D/C/B/V}/  
+│  └─ 아키텍쳐1 이름{모듈명 (예: i/m/a/f/d/c/b/v)}/  
 └─ 아키텍쳐2 이름/
 ```
 
