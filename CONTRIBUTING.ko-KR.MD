@@ -75,12 +75,12 @@ git checkout -b feature/your-feature-name
 - develop브랜치 (설계 및 기능구현 중심)
   - 주요 작업: 아키텍쳐 변경 및 모듈 추가
   - feature 브랜치: 단계별로 생성하기보다 모듈 단위로 생성합니다.
-    - 예) ```feature/alu/docs``` 설계 후 develop에 병합
+    - 예) ```feature/arch1/alu/docs``` 설계 후 develop에 병합
 
-    - 예) ```feature/alu/systemc``` 구현 -> 검증 후 develop에 병합
-    - 예) ```feature/alu/rtl```구현 -> 검증 후 develop에 병합
+    - 예) ```feature/arch1/alu/systemc``` 구현 -> 검증 후 develop에 병합
+    - 예) ```feature/arch1/alu/rtl```구현 -> 검증 후 develop에 병합
   - release 브랜치: 저수준 단계 검증 및 튜
-    - 예) ```feature/alu/spice```구현 -> 검증 후 develop에 병합
+    - 예) ```feature/arch1/alu/spice```구현 -> 검증 후 develop에 병합
   - main 브랜치: 최종 검증 완료
     - 기능 검증. 타이밍 검증, 전기적 검정 종료 후 제작 가능하고 문제가 발생하지 않는 상태일떄, main브랜치에 병합하고 버전을 올린다
 
@@ -95,7 +95,7 @@ git checkout -b feature/your-feature-name
 ```
 /
 ├─ 아키텍쳐1 이름/          # 각 아키텍쳐의 시작입니다.
-│  ├─ 아키텍쳐1 이름{모듈명 (예: i/m/a/f/d/c/b/v)}/    # 아키텍쳐 내부 모듈입니다.
+│  ├─ {아키텍쳐1 이름{모듈명 (예: i/m/a/f/d/c/b/v}/    # 아키텍쳐 내부 모듈입니다.
 │  │   ├─ docs/             # 아키텍쳐의 isa 설계, cpu내부 구조 설계 등 설계문서와 기타 문서가 들어갑니다.
 │  │   ├─ sim_systemc/      # SystemC를 이용해 설계한 아키텍쳐를 검증하는 곳입니다.
 │  │   ├─ rtl_Sverilog/     # SystemVerilog를 이용해 합성 가능한 RTL을 설계합니다.
