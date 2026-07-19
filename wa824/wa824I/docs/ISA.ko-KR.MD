@@ -1,5 +1,7 @@
+LSB 0 기준
+
 # R-Type
-OPCODE(4) RD(4) RS1(4) RS2(4) UNUSED(4) FUNCT(4)
+UNUSED(4) FUNCT(4) RS1(4) RS2(4) OPCODE(4) RD(4) 
 
 |operand|value|
 |--|--|
@@ -22,7 +24,7 @@ OPCODE(4) RD(4) RS1(4) RS2(4) UNUSED(4) FUNCT(4)
 나머지는 예약용
 
 # I-Type (상수계산, 간접점프)
-OPCODE(4) RD(4) RS(4) IMMIDIATE(8) FUNCT(4)
+IMMIDIATE\[7:4\](4) FUNCT(4) RS(4) IMMIDIATE\[3:0\](4) OPCODE(4) RD(4)
 
 |operand|value|
 |--|--|
@@ -41,10 +43,10 @@ JALR의 경우:
 |--|--|
 |RD|반환 주소값 저장할 레지스터|
 |RS|점프할 포인터 주소|
-|IMMIDIEATE(8)| 점프 주소 포인터 오프셋|
+|IMMIDIATE(8)| 점프 주소 포인터 오프셋|
 
 # I-Type(메모리로드)
-OPCODE(4) RD(4) RS(4) IMMIDIATE(12)
+IMMIDIATE\[11:4\](8) RS(4) IMMIDIATE\[3:0\](4) OPCODE(4) RD(4)
 |operand|value|
 |--|--|
 |OPCODE|0x2|
@@ -53,7 +55,7 @@ OPCODE(4) RD(4) RS(4) IMMIDIATE(12)
 |IMMIDIATE|읽기 대상 포인터 오프셋(바이트기준; Signed)|
 
 # S-Type
-OPCODE(4) RS2(4) RS1(4) IMMIDIATE(12)
+IMMIDIATE\[11:4\](8) RS1(4) IMMIDIATE\[3:0\](4) OPCODE(4) RS2(4) 
 |operand|value|
 |--|--|
 |OPCODE|0x3|
@@ -62,7 +64,7 @@ OPCODE(4) RS2(4) RS1(4) IMMIDIATE(12)
 |IMMIDIATE|쓰기 대상 포인터 오프셋(바이트기준; Signed)|
 
 # B-Type
-OPCODE(4) RS2(4) RS1(4) IMMIDIATE(8) FUNCT(4)
+IMMIDIATE\[7:4\](4) FUNCT(4) RS1(4) IMMIDIATE\[3:0\](4) OPCODE(4) RS2(4)
 |operand|value|
 |--|--|
 |OPCODE|0x04|
@@ -84,7 +86,7 @@ J-Type foo bar baz
 으로 대체 가능하기 떄문에 생략
 
 # J-Type(절대주소)
-OPCODE(4) RD(4) IMMIDIATE(16)
+IMMIDIATE\[7:0\](8) IMMIDIATE\[15:8\](8) OPCODE(4) RD(4)
 |operand|value|
 |--|--|
 |OPCODE|0x5|
@@ -92,7 +94,7 @@ OPCODE(4) RD(4) IMMIDIATE(16)
 |IMMIDIATE|점프할 주소(절대주소)|
 
 # J-Type(상대주소)
-OPCODE(4) RD(4) IMMIDIATE(16)
+IMMIDIATE\[7:0\](8) IMMIDIATE\[15:8\](8) OPCODE(4) RD(4)
 |operand|value|
 |--|--|
 |OPCODE|0x6|
@@ -102,7 +104,7 @@ IMMIDIATE의 경우 절대주소 대신 현재 PC에 적용할 Signed 오프셋 
 PIC 위해 만듬
 
 # SYSTEM
-OPCODE(4) INSTRUCTION_SPECIAL_RESERVED0(4) INSTRUCTION_SPECIAL_RESERVED1(4) INSTRUCTION_SPECIAL_RESERVED2(8) FUNCT(4)
+INSTRUCTION_SPECIAL_RESERVED2\[7:4\](4) FUNCT(4) INSTRUCTION_SPECIAL_RESERVED1(4) INSTRUCTION_SPECIAL_RESERVED2\[3:0\](4) OPCODE(4) INSTRUCTION_SPECIAL_RESERVED0(4)
 |operand|value|
 |--|--|
 |OPCODE|0x7|
