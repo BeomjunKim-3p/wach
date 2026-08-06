@@ -39,12 +39,11 @@ cd dependencies
 wget https://github.com/accellera-official/systemc/archive/refs/tags/3.0.2.tar.gz
 tar -xvzf 3.0.2.tar.gz
 cd systemc-3.0.2
-cmake -S . -B build -DCMAKE_INSTALL_PREFIX=./build/install -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_STANDARD_REQUIRED=ON
-cd build
-make -j$(nproc)
-make install
+cmake -S . -B build -DCMAKE_INSTALL_PREFIX=./install -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_STANDARD_REQUIRED=ON
+cmake --build build
+cmake --install build
 # SystemC 경로설정
-export SYSTEMC_HOME=<당신의 프로젝트 경로>/dependencies/systemc-3.0.2/build/install
+export SYSTEMC_HOME=<당신의 프로젝트 경로>/dependencies/systemc-3.0.2/install
 export LD_LIBRARY_PATH=$SYSTEMC_HOME/lib:$LD_LIBRARY_PATH
 ```
 
