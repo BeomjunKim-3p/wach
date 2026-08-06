@@ -6,6 +6,8 @@ set_target_properties(primitive PROPERTIES
 	CXX_SCAN_FOR_MODULES ON
 )
 
+add_subdirectory(test)
+
 target_sources(primitive
 	PUBLIC
 		FILE_SET CXX_MODULES
