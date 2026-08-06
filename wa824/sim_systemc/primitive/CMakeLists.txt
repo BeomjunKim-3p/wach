@@ -13,8 +13,9 @@ target_sources(primitive
 		FILE_SET CXX_MODULES
 		BASE_DIRS "public"
 		FILES
-
+			"public/three_state_buffer.cppm"
 	PRIVATE
+		"private/three_state_buffer.cpp"
 )
 
 target_link_libraries(primitive PUBLIC WA824)

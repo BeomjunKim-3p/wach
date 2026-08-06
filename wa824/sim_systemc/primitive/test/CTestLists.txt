@@ -1,0 +1,2 @@
+# ${TEST_NAME} ${TEST_SOURCE}
+TestThreeStateBuffer sources/test_three_state_buffer.cpp
