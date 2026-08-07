@@ -14,6 +14,7 @@ target_sources(primitive
 		BASE_DIRS "public"
 		FILES
 			"public/three_state_buffer.cppm"
+			"public/mux_nto1.cppm"
 	PRIVATE
 		"private/three_state_buffer.cpp"
 )
