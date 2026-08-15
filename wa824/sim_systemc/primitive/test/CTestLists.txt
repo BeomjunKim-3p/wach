@@ -1,3 +1,4 @@
 # ${TEST_NAME} ${TEST_SOURCE}
 TestThreeStateBuffer sources/test_three_state_buffer.cpp
 TestMuxNto1 sources/test_mux_nto1.cpp
+TestDeMux1toN sources/test_demux_1ton.cpp

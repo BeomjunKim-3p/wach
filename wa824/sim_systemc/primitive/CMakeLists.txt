@@ -15,6 +15,7 @@ target_sources(primitive
 		FILES
 			"public/three_state_buffer.cppm"
 			"public/mux_nto1.cppm"
+			"public/demux_1ton.cppm"
 	PRIVATE
 		"private/three_state_buffer.cpp"
 )
