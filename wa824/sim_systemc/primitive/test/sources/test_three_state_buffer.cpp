@@ -21,7 +21,7 @@ int sc_main(int argc, char* argv[]) {
 	dut.out(out);
 
 	// 시뮬레이션 트레이스 파일(VCD) 생성
-	sc_trace_file* tf = sc_create_vcd_trace_file("wave");
+	sc_trace_file* tf = sc_create_vcd_trace_file("vcd_three_state_buffer_test");
 	sc_trace(tf, in, "in");
 	sc_trace(tf, enable, "enable");
 	sc_trace(tf, out, "out");
@@ -38,6 +38,7 @@ int sc_main(int argc, char* argv[]) {
 	sc_start(10, SC_NS); // simulate
 
 	if (out.read() != SC_LOGIC_Z) {
+		test_passed = false;
 		std::cerr << "[ERROR] Test Case 1-1 Failed: Expected (out == 'SC_LOGIC_Z'), but got (out == 'SC_LOGIC_"
 			<< out.read() << "'). (in = 'SC_LOGIC_0', enable = 'false')" << std::endl;
 	}
@@ -48,6 +49,7 @@ int sc_main(int argc, char* argv[]) {
 	sc_start(10, SC_NS); // simulate
 
 	if (out.read() != SC_LOGIC_Z) {
+		test_passed = false;
 		std::cerr << "[ERROR] Test Case 1-2 Failed: Expected (out == 'SC_LOGIC_Z'), but got (out == 'SC_LOGIC_"
 			<< out.read() << "'). (in = 'SC_LOGIC_1', enable = 'false')" << std::endl;
 	}
@@ -58,6 +60,7 @@ int sc_main(int argc, char* argv[]) {
 	sc_start(10, SC_NS); // simulate
 
 	if (out.read() != SC_LOGIC_0) {
+		test_passed = false;
 		std::cerr << "[ERROR] Test Case 1-1 Failed: Expected (out == 'SC_LOGIC_0'), but got (out == 'SC_LOGIC_"
 			<< out.read() << "'). (in = 'SC_LOGIC_0', enable = 'true')" << std::endl;
 	}
@@ -68,6 +71,7 @@ int sc_main(int argc, char* argv[]) {
 	sc_start(10, SC_NS); // simulate
 
 	if (out.read() != SC_LOGIC_1) {
+		test_passed = false;
 		std::cerr << "[ERROR] Test Case 1-2 Failed: Expected (out == 'SC_LOGIC_1'), but got (out == 'SC_LOGIC_"
 			<< out.read() << "'). (in = 'SC_LOGIC_1', enable = 'true')" << std::endl;
 	}
