@@ -16,13 +16,22 @@ UNUSED(4) FUNCT(4) RS1(4) RS2(4) OPCODE(4) RD(4)
 |0x1|SUB|
 |0x2|AND|
 |0x3|OR|
-|0x4|SLL|
-|0x5|SLT|
-|0x6|SLTU|
-|0x7|SRL|
-|0x8|SRA|
+|0x4|XOR|
+|0x5|SLL|
+|0x6|SRL|
+|0x7|SRA|
+|0x8|SLT|
+|0x9|SLTU|
 
 나머지는 예약용
+
+shift계열의 경우
+|operand|value|
+|---|---|
+|RS1|소스|
+|RS2|시프트 카운트|
+
+SLT(U)의 경우: RD = (RS1 < RS2) ? 1 : 0
 
 # I-Type (상수계산, 간접점프)
 IMMIDIATE\[7:4\](4) FUNCT(4) RS(4) IMMIDIATE\[3:0\](4) OPCODE(4) RD(4)
@@ -73,7 +82,7 @@ IMMIDIATE\[7:4\](4) FUNCT(4) RS1(4) IMMIDIATE\[3:0\](4) OPCODE(4) RS2(4)
 |--|--|
 |OPCODE|0x04|
 |RS2|비교할 두번째 수|
-|RS1|비교할 첫번쨰 수|
+|RS1|비교할 첫번째 수|
 |IMMIDIATE|조건 만족시 이동할 오프셋(현재위치기준; 바이트기준; Signed)|
 
 |FUNC|세부기능|설명|
