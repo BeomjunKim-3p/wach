@@ -7,7 +7,7 @@ thpg::primitive::MuxNto1<N, W>::MuxNto1(sc_module_name name)
 }
 
 template <int N, int W>
-void thpg::primitive::MuxNto1<N, W>::refresh() {
+void thpg::primitive::MuxNto1<N, W>::refresh(void) {
 	if (sel.read().is_01() && sel.read().to_uint() < N) {
 		out.write(in[sel.read().to_uint()].read());
 	} else {
