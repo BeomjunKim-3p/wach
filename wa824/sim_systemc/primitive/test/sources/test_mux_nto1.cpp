@@ -32,7 +32,7 @@ struct MuxTest {
 		, out((std::string(name) + "_out").c_str())
 		, dut(name)
 	{
-		tf->set_time_unit(1, SC_NS);
+		tf->set_time_unit(10, SC_NS);
 		for (int i = 0; i < N; i++) {
 			std::string name = "in(" + std::to_string(i) + ")";
 			sc_trace(tf, in[i], name);

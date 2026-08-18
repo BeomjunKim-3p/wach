@@ -32,7 +32,7 @@ struct DeMuxTest {
 		, out((std::string(name) + "_out").c_str(), N)
 		, dut(name)
 	{
-		tf->set_time_unit(1, SC_NS);
+		tf->set_time_unit(10, SC_NS);
 		sc_trace(tf, in, "in");
 		sc_trace(tf, sel, "sel");
 		for (int i = 0; i < N; i++) {

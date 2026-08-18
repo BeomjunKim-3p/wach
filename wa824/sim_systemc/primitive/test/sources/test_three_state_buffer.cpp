@@ -22,6 +22,7 @@ int sc_main(int argc, char* argv[]) {
 
 	// 시뮬레이션 트레이스 파일(VCD) 생성
 	sc_trace_file* tf = sc_create_vcd_trace_file("vcd_three_state_buffer_test");
+	tf->set_time_unit(10, SC_NS);
 	sc_trace(tf, in, "in");
 	sc_trace(tf, enable, "enable");
 	sc_trace(tf, out, "out");
