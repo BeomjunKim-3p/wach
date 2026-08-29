@@ -5,7 +5,8 @@ module;
 module primitive.three_state_buffer;
 
 namespace thpg::primitive {
-	ThreeStateBuffer::ThreeStateBuffer(sc_module_name name) : sc_module(name) {
+	ThreeStateBuffer::ThreeStateBuffer(sc_module_name name) : sc_module(name)
+	{
 		SC_METHOD(refresh);
 		sensitive << in << enable;
 	}

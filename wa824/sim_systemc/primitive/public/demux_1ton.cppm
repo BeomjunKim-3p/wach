@@ -7,7 +7,7 @@ export module primitive.demux_1ton;
 #define CLOG2(N) ((N) <= 1 ? 1 : static_cast<int>(std::bit_width(static_cast<unsigned int>((N) - 1))))
 
 export namespace thpg::primitive {
-	template<int N = 2, int W = 8>
+	template <int N = 2, int W = 8>
 	class DeMux1toN : public sc_module {
 	public:
 		sc_in<sc_lv<W>> in{"in"};

@@ -5,7 +5,8 @@ module;
 module primitive.d_flip_flop;
 
 namespace thpg::primitive {
-	DFlipFlop::DFlipFlop(sc_module_name name) : sc_module(name) {
+	DFlipFlop::DFlipFlop(sc_module_name name) : sc_module(name)
+	{
 		SC_METHOD(refresh);
 		sensitive << clk.pos();
 	}

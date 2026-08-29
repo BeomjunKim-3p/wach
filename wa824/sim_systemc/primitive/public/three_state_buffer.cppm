@@ -12,7 +12,7 @@ export namespace thpg::primitive {
 
 		ThreeStateBuffer(sc_module_name name);
 
-		void refresh(void); 
+		void refresh(void);
 	};
 }
 
