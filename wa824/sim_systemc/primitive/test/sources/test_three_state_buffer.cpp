@@ -1,4 +1,3 @@
-#include "sysc/communication/sc_signal_resolved.h"
 #include <systemc.h>
 #include <iostream>
 
