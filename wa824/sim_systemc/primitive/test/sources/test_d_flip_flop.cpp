@@ -1,5 +1,3 @@
-#include "sysc/kernel/sc_simcontext.h"
-#include "sysc/tracing/sc_trace.h"
 #include <random>
 #include <systemc.h>
 #include <iostream>
