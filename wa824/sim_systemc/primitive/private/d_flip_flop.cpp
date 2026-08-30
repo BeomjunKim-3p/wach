@@ -11,7 +11,6 @@ namespace thpg::primitive {
 		sensitive << clk.pos();
 	}
 
-
 	void DFlipFlop::refresh(void)
 	{
 		if (d.read().is_01()) {

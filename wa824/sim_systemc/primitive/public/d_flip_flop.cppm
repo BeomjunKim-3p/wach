@@ -13,7 +13,7 @@ export namespace thpg::primitive {
 
 		DFlipFlop(sc_module_name name);
 
-		void refresh(void); 
+		void refresh(void);
 	};
 }
 
