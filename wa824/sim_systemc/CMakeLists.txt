@@ -42,9 +42,9 @@ endforeach()
 list(LENGTH INVALID_COMPONENTS ERROR_COUNT)
 if(ERROR_COUNT GREATER 0)
 	message(FATAL_ERROR 
-		"\n[CMAKE ERROR] Find Incorrect Component Modules: '${ITEM}'"
+		"\n[CMAKE ERROR] Find Incorrect Component Modules: '${COMPONENT_MODULES}'"
         	"\nSelect only from the list of allowed values (separated by semicolons)."
-		"\nAllowed Values: ${ALLOWED_LIST}\n"
+		"\nAllowed Values: ${ALLOWED_COMPONENT_LIST}\n"
         )
 endif()
 
@@ -77,6 +77,7 @@ if(TESTBENCH_MODULE)
 	target_compile_definitions(WA824 INTERFACE "USE_TESTBENCH")
 endif()
 
+<<<<<<< HEAD
 target_include_directories(WA824 INTERFACE $ENV{SYSTEMC_HOME}/include)
 
 target_link_directories(WA824 INTERFACE $ENV{SYSTEMC_HOME}/lib)
@@ -84,3 +85,13 @@ target_link_directories(WA824 INTERFACE $ENV{SYSTEMC_HOME}/lib)
 target_link_libraries(WA824 INTERFACE systemc m)
 
 
+=======
+if(DEFINED ENV{SYSTEMC_HOME})
+    list(APPEND CMAKE_PREFIX_PATH "$ENV{SYSTEMC_HOME}")
+else()
+    message(FATAL_ERROR "[CMake ERROR] SYSTEMC_HOME environment variable is not defined.")
+endif()
+
+find_package(SystemCLanguage REQUIRED CONFIG)
+target_link_libraries(WA824 INTERFACE SystemC::systemc)
+>>>>>>> 0268f56 (Build: fix cmakelists.txt)
