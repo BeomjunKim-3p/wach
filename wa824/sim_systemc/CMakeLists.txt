@@ -39,9 +39,9 @@ endforeach()
 list(LENGTH INVALID_ITEMS ERROR_COUNT)
 if(ERROR_COUNT GREATER 0)
 	message(FATAL_ERROR 
-		"\n[CMAKE ERROR] Find Incorrect Component Modules: '${ITEM}'"
+		"\n[CMAKE ERROR] Find Incorrect Component Modules: '${COMPONENT_MODULES}'"
         	"\nSelect only from the list of allowed values (separated by semicolons)."
-		"\nAllowed Values: ${ALLOWED_LIST}\n"
+		"\nAllowed Values: ${ALLOWED_COMPONENT_LIST}\n"
         )
 endif()
 
@@ -61,13 +61,11 @@ if(TESTBENCH_MODULE)
 	add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/testbench/${TESTBENCH_MODULE}")
 endif()
 
-target_include_directories(wa824I PRIVATE $ENV{SYSTEMC_HOME}/include)
+if(DEFINED ENV{SYSTEMC_HOME})
+    list(APPEND CMAKE_PREFIX_PATH "$ENV{SYSTEMC_HOME}")
+else()
+    message(FATAL_ERROR "[CMake ERROR] SYSTEMC_HOME environment variable is not defined.")
+endif()
 
-target_link_directories(wa824I PRIVATE $ENV{SYSTEMC_HOME}/lib)
-
-target_link_libraries(wa824I PRIVATE systemc m)
-
-set_target_properties(wa824I PROPERTIES
-	BUILD_WITH_INSTALL_RPATH TRUE
-	INSTALL_RPATH "$ENV{SYSTEMC_HOME}/lib"
-)
+find_package(SystemCLanguage REQUIRED CONFIG)
+target_link_libraries(WA824 INTERFACE SystemC::systemc)
