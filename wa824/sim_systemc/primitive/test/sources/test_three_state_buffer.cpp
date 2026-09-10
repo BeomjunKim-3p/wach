@@ -31,6 +31,48 @@ int sc_main(int argc, char* argv[]) {
 	//
 	// 테스트
 	//
+	
+	// 이상한값테스트
+	in.write(SC_LOGIC_X);
+	enable.write(false);
+	sc_start(10, SC_NS);
+
+	if (out.read() != SC_LOGIC_Z) {
+		test_passed = false;
+		std::cerr << "[FAIL] Dirty Test Failed: Expected (out == 'SC_LOGIC_Z'), but got (out == 'SC_LOGIC_"
+			<< out.read() << "'). (in = 'SC_LOGIC_X', enable = 'false')" << std::endl;
+	}
+
+	in.write(SC_LOGIC_X);
+	enable.write(true);
+	sc_start(10, SC_NS);
+
+	if (out.read() != SC_LOGIC_X) {
+		test_passed = false;
+		std::cerr << "[FAIL] Dirty Test Failed: Expected (out == 'SC_LOGIC_X'), but got (out == 'SC_LOGIC_"
+			<< out.read() << "'). (in = 'SC_LOGIC_X', enable = 'true')" << std::endl;
+	}
+
+	in.write(SC_LOGIC_Z);
+	enable.write(false);
+	sc_start(10, SC_NS);
+
+	if (out.read() != SC_LOGIC_Z) {
+		test_passed = false;
+		std::cerr << "[FAIL] Dirty Test Failed: Expected (out == 'SC_LOGIC_Z'), but got (out == 'SC_LOGIC_"
+			<< out.read() << "'). (in = 'SC_LOGIC_Z', enable = 'false')" << std::endl;
+	}
+
+	in.write(SC_LOGIC_Z);
+	enable.write(true);
+	sc_start(10, SC_NS);
+
+	if (out.read() != SC_LOGIC_Z) {
+		test_passed = false;
+		std::cerr << "[FAIL] Dirty Test Failed: Expected (out == 'SC_LOGIC_Z'), but got (out == 'SC_LOGIC_"
+			<< out.read() << "'). (in = 'SC_LOGIC_Z', enable = 'true')" << std::endl;
+	}
+
 
 	// [Test Case 1-1] if (in == 0) && (enable == false) then (out = Z)
 	in.write(SC_LOGIC_0);
@@ -39,7 +81,7 @@ int sc_main(int argc, char* argv[]) {
 
 	if (out.read() != SC_LOGIC_Z) {
 		test_passed = false;
-		std::cerr << "[ERROR] Test Case 1-1 Failed: Expected (out == 'SC_LOGIC_Z'), but got (out == 'SC_LOGIC_"
+		std::cerr << "[FAIL] Test Case 1-1 Failed: Expected (out == 'SC_LOGIC_Z'), but got (out == 'SC_LOGIC_"
 			<< out.read() << "'). (in = 'SC_LOGIC_0', enable = 'false')" << std::endl;
 	}
 
@@ -50,7 +92,7 @@ int sc_main(int argc, char* argv[]) {
 
 	if (out.read() != SC_LOGIC_Z) {
 		test_passed = false;
-		std::cerr << "[ERROR] Test Case 1-2 Failed: Expected (out == 'SC_LOGIC_Z'), but got (out == 'SC_LOGIC_"
+		std::cerr << "[FAIL] Test Case 1-2 Failed: Expected (out == 'SC_LOGIC_Z'), but got (out == 'SC_LOGIC_"
 			<< out.read() << "'). (in = 'SC_LOGIC_1', enable = 'false')" << std::endl;
 	}
 	
@@ -61,7 +103,7 @@ int sc_main(int argc, char* argv[]) {
 
 	if (out.read() != SC_LOGIC_0) {
 		test_passed = false;
-		std::cerr << "[ERROR] Test Case 1-1 Failed: Expected (out == 'SC_LOGIC_0'), but got (out == 'SC_LOGIC_"
+		std::cerr << "[FAIL] Test Case 1-1 Failed: Expected (out == 'SC_LOGIC_0'), but got (out == 'SC_LOGIC_"
 			<< out.read() << "'). (in = 'SC_LOGIC_0', enable = 'true')" << std::endl;
 	}
 
@@ -72,7 +114,7 @@ int sc_main(int argc, char* argv[]) {
 
 	if (out.read() != SC_LOGIC_1) {
 		test_passed = false;
-		std::cerr << "[ERROR] Test Case 1-2 Failed: Expected (out == 'SC_LOGIC_1'), but got (out == 'SC_LOGIC_"
+		std::cerr << "[FAIL] Test Case 1-2 Failed: Expected (out == 'SC_LOGIC_1'), but got (out == 'SC_LOGIC_"
 			<< out.read() << "'). (in = 'SC_LOGIC_1', enable = 'true')" << std::endl;
 	}
 
