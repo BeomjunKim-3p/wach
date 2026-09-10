@@ -77,15 +77,6 @@ if(TESTBENCH_MODULE)
 	target_compile_definitions(WA824 INTERFACE "USE_TESTBENCH")
 endif()
 
-<<<<<<< HEAD
-target_include_directories(WA824 INTERFACE $ENV{SYSTEMC_HOME}/include)
-
-target_link_directories(WA824 INTERFACE $ENV{SYSTEMC_HOME}/lib)
-
-target_link_libraries(WA824 INTERFACE systemc m)
-
-
-=======
 if(DEFINED ENV{SYSTEMC_HOME})
     list(APPEND CMAKE_PREFIX_PATH "$ENV{SYSTEMC_HOME}")
 else()
@@ -94,4 +85,3 @@ endif()
 
 find_package(SystemCLanguage REQUIRED CONFIG)
 target_link_libraries(WA824 INTERFACE SystemC::systemc)
->>>>>>> 0268f56 (Build: fix cmakelists.txt)
