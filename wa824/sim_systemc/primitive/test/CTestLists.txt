@@ -15,3 +15,6 @@ TestDFlipFlop         sources/test_d_flip_flop.cpp
 # TestRegisterREdge     sources/test_register_redge.cpp
 # TestRegisterFEdge     sources/test_register_fedge.cpp
 # TestRegisterBEdge     sources/test_register_bedge.cpp
+# TestRegisterFileREdge sources/test_register_file_redge.cpp
+# TestRegisterFileFEdge sources/test_register_file_fedge.cpp
+# TestRegisterFileBEdge sources/test_register_file_bedge.cpp

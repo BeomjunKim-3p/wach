@@ -28,6 +28,9 @@ target_sources(primitive
 			"public/register_redge.cppm"
 			"public/register_fedge.cppm"
 			"public/register_bedge.cppm"
+			"public/register_file_redge.cppm"
+			"public/register_file_fedge.cppm"
+			"public/register_file_bedge.cppm"
 	PRIVATE
 		"private/three_state_buffer.cpp"
 		"private/d_flip_flop.cpp"
