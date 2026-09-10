@@ -8,3 +8,7 @@ TestDFlipFlop         sources/test_d_flip_flop.cpp
 # TestAndGate           sources/arithmetic/bitwise/test_and.cpp
 # TestOrGate            sources/arithmetic/bitwise/test_or.cpp
 # TestXorGate           sources/arithmetic/bitwise/test_xor.cpp
+# TestAdder             sources/arithmetic/test_adder.cpp
+# TestComparator        sources/arithmetic/test_comparator.cpp
+# TestShifter           sources/arithmetic/test_shifter.cpp
+# TestSubtractor        sources/arithmetic/test_subrractor.cpp

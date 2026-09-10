@@ -21,6 +21,10 @@ target_sources(primitive
 			"public/arithmetic/bitwise_logic/and.cppm"
 			"public/arithmetic/bitwise_logic/or.cppm"
 			"public/arithmetic/bitwise_logic/xor.cppm"
+			"public/arithmetic/adder.cppm"
+			"public/arithmetic/subtractor.cppm"
+			"public/arithmetic/comparator.cppm"
+			"public/arithmetic/shifter.cppm"
 	PRIVATE
 		"private/three_state_buffer.cpp"
 		"private/d_flip_flop.cpp"
