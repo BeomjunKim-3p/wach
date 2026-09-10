@@ -25,6 +25,9 @@ target_sources(primitive
 			"public/arithmetic/subtractor.cppm"
 			"public/arithmetic/comparator.cppm"
 			"public/arithmetic/shifter.cppm"
+			"public/register_redge.cppm"
+			"public/register_fedge.cppm"
+			"public/register_bedge.cppm"
 	PRIVATE
 		"private/three_state_buffer.cpp"
 		"private/d_flip_flop.cpp"

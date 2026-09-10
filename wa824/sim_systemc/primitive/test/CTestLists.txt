@@ -12,3 +12,6 @@ TestDFlipFlop         sources/test_d_flip_flop.cpp
 # TestComparator        sources/arithmetic/test_comparator.cpp
 # TestShifter           sources/arithmetic/test_shifter.cpp
 # TestSubtractor        sources/arithmetic/test_subrractor.cpp
+# TestRegisterREdge     sources/test_register_redge.cpp
+# TestRegisterFEdge     sources/test_register_fedge.cpp
+# TestRegisterBEdge     sources/test_register_bedge.cpp
