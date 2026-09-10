@@ -9,9 +9,13 @@ thpg::primitive::MuxNto1<N, W>::MuxNto1(sc_module_name name)
 template <int N, int W>
 void thpg::primitive::MuxNto1<N, W>::refresh(void)
 {
-	if (sel.read().is_01() && sel.read().to_uint() < N) {
+	[&]{
+		if (!(sel.read().is_01() && sel.read().to_uint() < N)) {
+			out.write(sc_lv<W>(SC_LOGIC_X));
+			return;
+		}
+	
 		out.write(in[sel.read().to_uint()].read());
-	} else {
-		out.write(sc_lv<W>(SC_LOGIC_X));
-	}
-} 
+		return;
+	}();
+}
