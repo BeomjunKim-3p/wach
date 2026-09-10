@@ -17,6 +17,10 @@ target_sources(primitive
 			"public/mux_nto1.cppm"
 			"public/demux_1ton.cppm"
 			"public/d_flip_flop.cppm"
+			# 테스트 미작성된것들빌드만테스트
+			"public/arithmetic/bitwise_logic/and.cppm"
+			"public/arithmetic/bitwise_logic/or.cppm"
+			"public/arithmetic/bitwise_logic/xor.cppm"
 	PRIVATE
 		"private/three_state_buffer.cpp"
 		"private/d_flip_flop.cpp"
