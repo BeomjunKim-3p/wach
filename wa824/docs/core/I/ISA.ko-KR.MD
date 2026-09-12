@@ -43,20 +43,6 @@ IMMIDIATE\[7:4\](4) FUNCT(4) RS(4) IMMIDIATE\[3:0\](4) OPCODE(4) RD(4)
 |RS|소스 1|
 |IMMIDIATE|소스 2 즉시값|
 
-FUNCT는 R-Type에
-
-|FUNCT|세부기능|
-|---|----|
-|0xF|JALR|
-
-추가
-
-JALR의 경우:
-|operand|value|
-|--|--|
-|RD|반환 주소값 저장할 레지스터|
-|RS|점프할 포인터 주소|
-|IMMIDIATE(8)| 점프 주소 포인터 오프셋|
 
 # I-Type(메모리로드)
 IMMIDIATE\[11:4\](8) RS(4) IMMIDIATE\[3:0\](4) OPCODE(4) RD(4)
@@ -118,11 +104,23 @@ IMMIDIATE\[7:0\](8) IMMIDIATE\[15:8\](8) OPCODE(4) RD(4)
 IMMIDIATE의 경우 절대주소 대신 현재 PC에 적용할 Signed 오프셋 값
 PIC 위해 만듬
 
+# J-Type(포인터상대주소)
+IMMIDIATE\[7:0\](8) RS(4) IMMIDIATE\[11:8\](4) OPCODE(4) RD(4)
+
+|operand|value|
+|--|--|
+|OPCODE|0x7|
+|RD|J-Type과 동일|
+|RS|점프할 주소 든 포인터 레지스터|
+
+RD = Counter + 1
+Counter = *RS + IMMIDIATE
+
 # SYSTEM
 INSTRUCTION_SPECIAL_RESERVED2\[7:4\](4) FUNCT(4) INSTRUCTION_SPECIAL_RESERVED1(4) INSTRUCTION_SPECIAL_RESERVED2\[3:0\](4) OPCODE(4) INSTRUCTION_SPECIAL_RESERVED0(4)
 |operand|value|
 |--|--|
-|OPCODE|0x7|
+|OPCODE|0x8|
 
 ## ECALL EBRAKE
 |FUNCT|세부사항| 
