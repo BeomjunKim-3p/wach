@@ -24,7 +24,7 @@ export namespace thpg::primitive {
 	
 	private:
 	// 대충 rcs만 demux통과시키고 나머지 다 묶기
-		sc_vector<RegisterBEdge<N>> rregister{"R REGISTER", W};
+		sc_vector<RegisterBEdge<N>> rregister{"R REGISTER"};
 		sc_vector<sc_signal<sc_logic>> rcs{"R CS", W};
 		sc_vector<sc_signal<sc_lv<N>>> ralwaysout{"R ALWAYSOUT", W};
 	};

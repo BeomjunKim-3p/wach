@@ -29,7 +29,7 @@ void thpg::primitive::arithmetic::Subtractor<N>::refresh(void)
 		u_int_type val_a = a.read(), val_b = b.read();
 		u_int_type sub_res = val_a - val_b - borrow_in.read().to_bool();
 
-		out.write(sub_res.range(N - 1, 0));
-		borrow_out.write(sub_res[N]);
+		out.write(sub_res.range(N - 1, 0).to_string().c_str());
+		borrow_out.write(sub_res[N].to_bool() ? SC_LOGIC_1 : SC_LOGIC_0);
 	}();
 }

@@ -29,8 +29,8 @@ void thpg::primitive::arithmetic::Adder<N>::refresh(void)
 		u_int_type val_a = a.read(), val_b = b.read();
 		u_int_type add_res = val_a + val_b + carry_in.read().to_bool();
 
-		out.write(add_res.range(N - 1, 0));
-		carry_out.write(add_res[N]);
+		out.write(add_res.range(N - 1, 0).to_string().c_str());
+		carry_out.write(add_res[N].to_bool() ? SC_LOGIC_1 : SC_LOGIC_0);
 		return;
 	}();
 }

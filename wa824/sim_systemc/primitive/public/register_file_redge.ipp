@@ -5,6 +5,10 @@ thpg::primitive::RegisterFileREdge<N, W>::RegisterFileREdge(sc_module_name name,
 	SC_METHOD(refreshcs);
 	sensitive << addr << cs.pos();
 
+	rregister.init(W, [&](const char* name, size_t i) {
+            return new RegisterREdge<N>(name, tf);
+        });
+	
 	sc_bind(rregister.cs, rcs);
 	sc_bind(rregister.alwaysout, ralwaysout);
 

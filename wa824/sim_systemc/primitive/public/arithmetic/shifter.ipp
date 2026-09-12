@@ -25,19 +25,19 @@ void thpg::primitive::arithmetic::Shifter<N>::refresh(void)
 		}
 
 		if (is_rotate && direction_right) {
-			out.write((a >> b) | (a << (N - b)));
+			out.write((a.read().to_uint() >> b.read().to_uint()) | (a.read().to_uint() << (N - b.read().to_uint())));
 			return;
 		}
 		if (is_rotate && !direction_right) {
-			out.write((a << b) | (a >> (N - b)));
+			out.write((a.read().to_uint() << b.read().to_uint()) | (a.read().to_uint() >> (N - b.read().to_uint())));
 			return;
 		}
 		if (!is_rotate && direction_right) {
-			out.write(a >> b);
+			out.write(a.read().to_uint() >> b.read().to_uint());
 			return;
 		}
 		if (!is_rotate && !direction_right) {
-			out.write(a << b);
+			out.write(a.read().to_uint() << b.read().to_uint());
 			return;
 		}
 	}();
