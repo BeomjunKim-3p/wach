@@ -21,7 +21,7 @@ namespace thpg::core::i {
 		sc_in<bool> direction_right{"direction_right"};
 		sc_in<sc_lv<4>> inst_in{"Inst In"};
 		sc_out<sc_lv<8>> y{"Y"};
-		sc_out<sc_lv<4>> flag_out{"Flag Out"};
+		sc_out<sc_lv<4>> flag_out{"Flag Out"}; // NZCV
 
 		ALU(sc_module_name name, sc_trace_file *tf = nullptr);
 

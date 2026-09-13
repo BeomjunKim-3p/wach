@@ -41,11 +41,6 @@ namespace thpg::core::i {
 		adder.out(adderout);
 		adder.carry_out(addercarryout);
 
-		subtractor.a(a);
-		subtractor.b(b);
-		subtractor.borrow_in(carry);
-		subtractor.out(subtractorout);
-		subtractor.borrow_out(subtractorcarryout);
 
 		shifter.a(a);
 		shifter.b(b);
@@ -63,7 +58,6 @@ namespace thpg::core::i {
 		outmux.in[1](orout);
 		outmux.in[2](xorout);
 		outmux.in[3](adderout);
-		outmux.in[4](subtractorout);
 		outmux.in[5](shifterout);
 		outmux.in[6](cmpout);
 		outmux.out(muxout);
@@ -159,6 +153,13 @@ namespace thpg::core::i {
 					muxsel.write(6);
 					break;
 			}
+
+			sc_lv<4> temp;
+			temp[3] = muxout.read()[8]; // N
+			temp[2] = muxout.read().to_uint() == 0 ? SC_LOGIC_1 : SC_LOGIC_0; // Z
+			temp[1] = addercarryout.read(); // C
+			temp[0] = (carry.read() ^ addercarryout.read()); // V
+			flag_out.write(temp);
 		}();
 	}
 }
