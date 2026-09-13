@@ -92,7 +92,7 @@ J-Type foo bar baz
 으로 대체 가능하기 떄문에 생략
 
 # JA-Type(절대주소)
-IMMIDIATE\[7:0\](8) IMMIDIATE\[15:8\](8) OPCODE(4) WRD(3) UNUSED(1)
+IMMIDIATE\[15:8\](8) IMMIDIATE\[7:0\](8) OPCODE(4) WRD(3) UNUSED(1)
 |operand|value|
 |--|--|
 |OPCODE|0x5|
@@ -100,7 +100,7 @@ IMMIDIATE\[7:0\](8) IMMIDIATE\[15:8\](8) OPCODE(4) WRD(3) UNUSED(1)
 |IMMIDIATE|점프할 주소(절대주소)|
 
 # JR-Type(상대주소)
-IMMIDIATE\[7:0\](8) IMMIDIATE\[15:8\](8) OPCODE(4) WRD(3) UNUSED(1)
+IMMIDIATE\[15:8\](8) IMMIDIATE\[7:0\](8) OPCODE(4) WRD(3) UNUSED(1)
 |operand|value|
 |--|--|
 |OPCODE|0x6|
@@ -111,7 +111,7 @@ IMMIDIATE의 경우 절대주소 대신 현재 PC에 적용할 Signed 오프셋 
 PIC 위해 만듬
 
 # JRP-Type(포인터상대주소)
-IMMIDIATE\[7:0\](8) WRS(3) UNUSED(1) IMMIDIATE\[11:8\](4) OPCODE(4) WRD(3) UNUSED(1)
+IMMIDIATE\[11:8\](8) WRS(3) UNUSED(1) IMMIDIATE\[7:0\](4) OPCODE(4) WRD(3) UNUSED(1)
 
 |operand|value|
 |--|--|
