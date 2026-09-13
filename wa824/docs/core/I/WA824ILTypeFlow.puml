@@ -3,7 +3,6 @@ title L-Type
 autonumber
 participant controller         as ct
 participant alu                as al
-participant mmu                as mm
 participant registerfile       as rf
 participant "program counter"  as pc
 participant databus            as db
