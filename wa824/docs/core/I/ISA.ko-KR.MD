@@ -111,13 +111,13 @@ IMMIDIATE의 경우 절대주소 대신 현재 PC에 적용할 Signed 오프셋 
 PIC 위해 만듬
 
 # JRP-Type(포인터상대주소)
-IMMIDIATE\[7:0\](8) RS(4) IMMIDIATE\[11:8\](4) OPCODE(4) WRD(3) UNUSED(1)
+IMMIDIATE\[7:0\](8) WRS(3) UNUSED(1) IMMIDIATE\[11:8\](4) OPCODE(4) WRD(3) UNUSED(1)
 
 |operand|value|
 |--|--|
 |OPCODE|0x7|
 |WRD|J-Type과 동일|
-|RS|점프할 주소 든 포인터 레지스터|
+|WRS|점프할 주소 든 포인터 레지스터|
 
 WRD = Counter + 1
 Counter = *RS + IMMIDIATE
