@@ -1,0 +1,78 @@
+@startuml
+title L-Type
+autonumber
+participant controller         as ct
+participant alu                as al
+participant mmu                as mm
+participant registerfile       as rf
+participant "program counter"  as pc
+participant databus            as db
+participant dataline           as dl
+participant addrline           as ad
+participant mem                as me
+
+group fetch1
+  pc -> ad : fetch1
+  ad --> me
+  me --> dl
+  dl -> db
+  db -> ct : opcode && rd
+end
+
+group decode1
+  ct --> ct : decode
+  ct -> ct : rd 저장
+end
+
+group fetch2
+  ct --> pc : next
+  pc -> ad : fetch2
+  ad --> me
+  me --> dl
+  dl -> db
+  db -> ct : rs && immi[3:0] 저장
+end
+
+group decode2
+  ct --> ct : decode
+  ct -> ct : rs 저장
+  ct -> ct : immi[3:0] 저장
+end
+
+group fetch3
+  ct --> pc : next
+  pc -> ad : fetch3
+  ad --> me
+  me --> dl
+  dl -> db
+  db -> ct : immi[11:4]
+end
+
+group decode3
+  ct --> ct : decode
+  ct -> ct : immi[11:4] 저장
+end
+
+group execute
+  ct --> rf : rs요청
+  rf -> db : [rs]
+  db -> pc : 16bitAdderA
+  ct -> pc : ImmiGen, 16bitAdderB
+  pc -> ad : 16bitAdderY
+  ad --> me
+  me --> dl
+  dl -> db
+end
+
+group writeback
+  ct --> rf : rd 쓰기요청
+  db -> rf
+end
+
+ct --> pc : next
+note right: 다음 명령어 실행 위해 준비
+
+group Interrupt
+end
+note right: 별도의 WA824IInterruptState파일에서 기술
+@enduml

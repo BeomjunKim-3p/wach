@@ -1,5 +1,10 @@
 LSB 0 기준
 
+레지스터는 16비트 8개가 들어있으며, 각각 h, l로 접근합니다.
+예) r0h, r0l, r1h, r1l, r2h, r2l
+이를통해 16비트 주소를 레지스터에 담을수 있게 합니다.
+따라서 주소저장용으로 16비트 레지스터를 인자로 받는 경우 인자에 접두어 W를 붙입니다.
+
 # R-Type
 UNUSED(4) FUNCT(4) RS1(4) RS2(4) OPCODE(4) RD(4) 
 
@@ -33,7 +38,7 @@ shift계열의 경우
 
 SLT(U)의 경우: RD = (RS1 < RS2) ? 1 : 0
 
-# I-Type (상수계산, 간접점프)
+# I-Type (상수계산)
 IMMIDIATE\[7:4\](4) FUNCT(4) RS(4) IMMIDIATE\[3:0\](4) OPCODE(4) RD(4)
 
 |operand|value|
@@ -43,23 +48,24 @@ IMMIDIATE\[7:4\](4) FUNCT(4) RS(4) IMMIDIATE\[3:0\](4) OPCODE(4) RD(4)
 |RS|소스 1|
 |IMMIDIATE|소스 2 즉시값|
 
+FUNCT는 R-Type과 동일, subi 제외
 
-# I-Type(메모리로드)
-IMMIDIATE\[11:4\](8) RS(4) IMMIDIATE\[3:0\](4) OPCODE(4) RD(4)
+# L-Type
+IMMIDIATE\[11:4\](8) WRS(3) UNUSED(1) IMMIDIATE\[3:0\](4) OPCODE(4) RD(4)
 |operand|value|
 |--|--|
 |OPCODE|0x2|
 |RD|메모리 값 저장할 레지스터|
-|RS|메모리 값 읽어올 포인터|
+|WRS|메모리 값 읽어올 포인터|
 |IMMIDIATE|읽기 대상 포인터 오프셋(바이트기준; Signed)|
 
 # S-Type
-IMMIDIATE\[11:4\](8) RS1(4) IMMIDIATE\[3:0\](4) OPCODE(4) RS2(4) 
+IMMIDIATE\[11:4\](8) WRS1(3) UNUSED(1) IMMIDIATE\[3:0\](4) OPCODE(4) RS2(4) 
 |operand|value|
 |--|--|
 |OPCODE|0x3|
 |RS2|메모리에 저장할 데이터 담긴 레지스터|
-|RS1|메모리 저장할 주소 포인터|
+|WRS1|메모리 저장할 주소 포인터|
 |IMMIDIATE|쓰기 대상 포인터 오프셋(바이트기준; Signed)|
 
 # B-Type
@@ -85,16 +91,16 @@ J-Type foo bar baz
   ```
 으로 대체 가능하기 떄문에 생략
 
-# J-Type(절대주소)
-IMMIDIATE\[7:0\](8) IMMIDIATE\[15:8\](8) OPCODE(4) RD(4)
+# JA-Type(절대주소)
+IMMIDIATE\[15:8\](8) IMMIDIATE\[7:0\](8) OPCODE(4) WRD(3) UNUSED(1)
 |operand|value|
 |--|--|
 |OPCODE|0x5|
-|RD|반환 주소값 저장할 레지스터|
+|WRD|반환 주소값 저장할 레지스터|
 |IMMIDIATE|점프할 주소(절대주소)|
 
-# J-Type(상대주소)
-IMMIDIATE\[7:0\](8) IMMIDIATE\[15:8\](8) OPCODE(4) RD(4)
+# JR-Type(상대주소)
+IMMIDIATE\[15:8\](8) IMMIDIATE\[7:0\](8) OPCODE(4) WRD(3) UNUSED(1)
 |operand|value|
 |--|--|
 |OPCODE|0x6|
@@ -104,16 +110,16 @@ IMMIDIATE\[7:0\](8) IMMIDIATE\[15:8\](8) OPCODE(4) RD(4)
 IMMIDIATE의 경우 절대주소 대신 현재 PC에 적용할 Signed 오프셋 값
 PIC 위해 만듬
 
-# J-Type(포인터상대주소)
-IMMIDIATE\[7:0\](8) RS(4) IMMIDIATE\[11:8\](4) OPCODE(4) RD(4)
+# JRP-Type(포인터상대주소)
+IMMIDIATE\[11:8\](8) WRS(3) UNUSED(1) IMMIDIATE\[7:0\](4) OPCODE(4) WRD(3) UNUSED(1)
 
 |operand|value|
 |--|--|
 |OPCODE|0x7|
-|RD|J-Type과 동일|
-|RS|점프할 주소 든 포인터 레지스터|
+|WRD|J-Type과 동일|
+|WRS|점프할 주소 든 포인터 레지스터|
 
-RD = Counter + 1
+WRD = Counter + 1
 Counter = *RS + IMMIDIATE
 
 # SYSTEM

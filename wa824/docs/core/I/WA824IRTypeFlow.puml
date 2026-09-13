@@ -1,0 +1,81 @@
+@startuml
+title R-Type
+autonumber
+participant controller         as ct
+participant alu                as al
+participant registerfile       as rf
+participant "program counter"  as pc
+participant databus            as db
+participant dataline           as dl
+participant addrline           as adl
+participant mem                as me
+
+group fetch1
+  pc -> adl : fetch1
+  adl --> me
+  me --> dl
+  dl -> db
+  db -> ct : opcode && rd
+end
+
+group decode1
+  ct --> ct : decode
+  note right: 여기서부터 컨트롤러는 현재 RType 실행중임을 알고 OF를 미리 진행할수 있다
+  ct -> ct : rd 저장
+end
+
+group fetch2
+  ct --> pc : next
+  pc -> adl : fetch2
+  adl --> me
+  me --> dl
+  dl -> db
+  db -> ct : rs1 && rs2
+end
+
+group decode2
+  ct --> ct : decode
+  ct -> ct : rs1 저장
+  ct -> ct : rs2 저장
+  group OF
+    ct --> rf : rs1요청
+    rf -> db : [rs1]
+    db -> al : a
+    ct --> rf : rs2요청
+    rf -> db : [rs2]
+    db -> al : b
+  end
+  note right: 현재 RType 임을 알고 OF 미리 진행
+end
+
+group fetch3
+  ct --> pc : next
+  pc -> adl : fetch3
+  adl --> me
+  me --> dl
+  dl -> db
+  db -> ct : funct
+end
+
+group decode3
+  ct --> ct : decode
+  ct -> ct : funct를 ALU_Inst 로 변환
+end
+
+group execute
+  ct --> al : ALU_Inst
+  al -> db : y
+end
+
+group writeback
+  ct --> rf : rd 쓰기요청
+  db -> rf
+end
+
+ct --> pc : next
+note right: 다음 명령어 실행 위해 준비
+
+group Interrupt
+end
+note right: 별도의 WA824IInterruptState파일에서 기술
+@enduml
