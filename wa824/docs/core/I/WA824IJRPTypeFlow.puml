@@ -1,0 +1,65 @@
+@startuml
+title JRP-Type
+autonumber
+participant controller         as ct
+participant alu                as al
+participant registerfile       as rf
+participant "program counter"  as pc
+participant databus            as db
+participant dataline           as dl
+participant addrline           as adl
+participant mem                as me
+
+group fetch1
+  pc -> adl : fetch1
+  adl --> me
+  me --> dl
+  dl -> db
+  db -> ct : opcode && wrd
+end
+
+group decode1
+  ct --> ct : decode
+  ct -> ct : wrd저장
+end
+
+group fetch2
+  ct --> pc : next
+  pc -> adl : fetch2
+  adl --> me
+  me --> dl
+  dl -> db
+  db -> ct : immi[7:0]
+end
+
+group decode2
+  ct --> ct : decode
+  ct -> ct : immi[7:0] 저장
+end
+
+group fetch3
+  ct --> pc : next
+  pc -> adl : fetch3
+  adl --> me
+  me --> dl
+  dl -> db
+  db -> ct : immi[11:8] && WRS
+end
+
+group decode3
+  ct --> ct : decode
+  ct -> ct : immi[11:8] 저장
+  ct -> ct : WRS 저장
+end
+
+group execute
+  ct -> pc : ImmiGen
+  ct --> pc : PC_ADDA = WRS
+  ct --> pc : PC_ADDB = ImmiGen
+  ct --> pc : PC_NEXT
+end
+
+group Interrupt
+end
+note right: 별도의 WA824IInterruptState파일에서 기술
+@enduml
