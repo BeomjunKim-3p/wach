@@ -422,7 +422,6 @@
             </Array>
           </mxGeometry>
         </mxCell>
-          <mxGeometry height="33.75" width="120.4" y="878.13" as="geometry" />
         <mxCell id="pVEqZ670qdtYAgdLrIqG-64" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;rounded=0;" value="ImmiGen_DeMuxSel&lt;div&gt;(2&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;bit) (out)&lt;/span&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="33.75" width="120.4" x="-276" y="1208.13" as="geometry" />
         </mxCell>
