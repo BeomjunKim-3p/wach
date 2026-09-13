@@ -33,7 +33,7 @@ shift계열의 경우
 
 SLT(U)의 경우: RD = (RS1 < RS2) ? 1 : 0
 
-# I-Type (상수계산, 간접점프)
+# I-Type (상수계산)
 IMMIDIATE\[7:4\](4) FUNCT(4) RS(4) IMMIDIATE\[3:0\](4) OPCODE(4) RD(4)
 
 |operand|value|
@@ -43,6 +43,7 @@ IMMIDIATE\[7:4\](4) FUNCT(4) RS(4) IMMIDIATE\[3:0\](4) OPCODE(4) RD(4)
 |RS|소스 1|
 |IMMIDIATE|소스 2 즉시값|
 
+FUNCT는 R-Type과 동일, subi 제외
 
 # I-Type(메모리로드)
 IMMIDIATE\[11:4\](8) RS(4) IMMIDIATE\[3:0\](4) OPCODE(4) RD(4)
