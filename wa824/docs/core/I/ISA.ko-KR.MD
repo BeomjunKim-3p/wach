@@ -45,7 +45,7 @@ IMMIDIATE\[7:4\](4) FUNCT(4) RS(4) IMMIDIATE\[3:0\](4) OPCODE(4) RD(4)
 
 FUNCT는 R-Type과 동일, subi 제외
 
-# I-Type(메모리로드)
+# L-Type
 IMMIDIATE\[11:4\](8) RS(4) IMMIDIATE\[3:0\](4) OPCODE(4) RD(4)
 |operand|value|
 |--|--|
@@ -86,7 +86,7 @@ J-Type foo bar baz
   ```
 으로 대체 가능하기 떄문에 생략
 
-# J-Type(절대주소)
+# JA-Type(절대주소)
 IMMIDIATE\[7:0\](8) IMMIDIATE\[15:8\](8) OPCODE(4) RD(4)
 |operand|value|
 |--|--|
@@ -94,7 +94,7 @@ IMMIDIATE\[7:0\](8) IMMIDIATE\[15:8\](8) OPCODE(4) RD(4)
 |RD|반환 주소값 저장할 레지스터|
 |IMMIDIATE|점프할 주소(절대주소)|
 
-# J-Type(상대주소)
+# JR-Type(상대주소)
 IMMIDIATE\[7:0\](8) IMMIDIATE\[15:8\](8) OPCODE(4) RD(4)
 |operand|value|
 |--|--|
@@ -105,7 +105,7 @@ IMMIDIATE\[7:0\](8) IMMIDIATE\[15:8\](8) OPCODE(4) RD(4)
 IMMIDIATE의 경우 절대주소 대신 현재 PC에 적용할 Signed 오프셋 값
 PIC 위해 만듬
 
-# J-Type(포인터상대주소)
+# JRP-Type(포인터상대주소)
 IMMIDIATE\[7:0\](8) RS(4) IMMIDIATE\[11:8\](4) OPCODE(4) RD(4)
 
 |operand|value|
