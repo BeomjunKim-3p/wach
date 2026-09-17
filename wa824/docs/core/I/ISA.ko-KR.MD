@@ -31,6 +31,7 @@ UNUSED(4) FUNCT(4) RS1(4) RS2(4) OPCODE(4) RD(4)
 나머지는 예약용
 
 shift계열의 경우
+
 |operand|value|
 |---|---|
 |RS1|소스|
@@ -52,6 +53,7 @@ FUNCT는 R-Type과 동일, subi 제외
 
 # L-Type
 IMMIDIATE\[11:4\](8) WRS(3) UNUSED(1) IMMIDIATE\[3:0\](4) OPCODE(4) RD(4)
+
 |operand|value|
 |--|--|
 |OPCODE|0x2|
@@ -60,7 +62,8 @@ IMMIDIATE\[11:4\](8) WRS(3) UNUSED(1) IMMIDIATE\[3:0\](4) OPCODE(4) RD(4)
 |IMMIDIATE|읽기 대상 포인터 오프셋(바이트기준; Signed)|
 
 # S-Type
-IMMIDIATE\[11:4\](8) WRS1(3) UNUSED(1) IMMIDIATE\[3:0\](4) OPCODE(4) RS2(4) 
+IMMIDIATE\[11:4\](8) WRS1(3) UNUSED(1) IMMIDIATE\[3:0\](4) OPCODE(4) RS2(4)
+
 |operand|value|
 |--|--|
 |OPCODE|0x3|
@@ -70,6 +73,7 @@ IMMIDIATE\[11:4\](8) WRS1(3) UNUSED(1) IMMIDIATE\[3:0\](4) OPCODE(4) RS2(4)
 
 # B-Type
 IMMIDIATE\[7:4\](4) FUNCT(4) RS1(4) IMMIDIATE\[3:0\](4) OPCODE(4) RS2(4)
+
 |operand|value|
 |--|--|
 |OPCODE|0x04|
@@ -93,6 +97,7 @@ J-Type foo bar baz
 
 # JA-Type(절대주소)
 IMMIDIATE\[15:8\](8) IMMIDIATE\[7:0\](8) OPCODE(4) WRD(3) UNUSED(1)
+
 |operand|value|
 |--|--|
 |OPCODE|0x5|
@@ -101,6 +106,7 @@ IMMIDIATE\[15:8\](8) IMMIDIATE\[7:0\](8) OPCODE(4) WRD(3) UNUSED(1)
 
 # JR-Type(상대주소)
 IMMIDIATE\[15:8\](8) IMMIDIATE\[7:0\](8) OPCODE(4) WRD(3) UNUSED(1)
+
 |operand|value|
 |--|--|
 |OPCODE|0x6|
@@ -124,11 +130,13 @@ Counter = *RS + IMMIDIATE
 
 # SYSTEM
 INSTRUCTION_SPECIAL_RESERVED2\[7:4\](4) FUNCT(4) INSTRUCTION_SPECIAL_RESERVED1(4) INSTRUCTION_SPECIAL_RESERVED2\[3:0\](4) OPCODE(4) INSTRUCTION_SPECIAL_RESERVED0(4)
+
 |operand|value|
 |--|--|
 |OPCODE|0x8|
 
 ## ECALL EBRAKE
+
 |FUNCT|세부사항| 
 |--|--|
 |0x0|ECALL|
@@ -137,6 +145,7 @@ INSTRUCTION_SPECIAL_RESERVED2\[7:4\](4) FUNCT(4) INSTRUCTION_SPECIAL_RESERVED1(4
 
 
 INSTRUCTION_SPECIAL_RESERVED:
+
 |Number|detail|
 |--|--|
 |0|UNUSED|
