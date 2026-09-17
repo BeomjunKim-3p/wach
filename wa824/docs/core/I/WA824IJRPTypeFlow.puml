@@ -53,8 +53,19 @@ group decode3
 end
 
 group execute
+  pc -> db : adder y
+  ct --> rf : 하위바이트 rdl 저장 요청
+  db -> rf
+  ct --> rf : 상위바이트 rdh 저장 요청
+  db -> rf
+  ct --> rf : wrs << 1 요청
+  rf -> db : [wrs << 1]
+  db -> pc : 임시레지스터에 하위바이트 적재
+  ct --> rf : wrs << 1 + 1 요청
+  rf -> db : [wrs << 1 + 1]
+  db -> pc : 임시레지스터에 상위바이트 적재
   ct -> pc : ImmiGen
-  ct --> pc : PC_ADDA = WRS
+  ct --> pc : PC_ADDA = 임시레지스터
   ct --> pc : PC_ADDB = ImmiGen
   ct --> pc : PC_NEXT
 end

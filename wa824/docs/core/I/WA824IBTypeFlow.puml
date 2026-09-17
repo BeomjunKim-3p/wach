@@ -33,7 +33,7 @@ group fetch2
   db -> ct : rs1 && immi[3:0] 저장
 end
 
-group decode2
+group decode3
   ct --> ct : decode
   ct -> ct : rs1 저장
   ct -> ct : immi[3:0] 저장

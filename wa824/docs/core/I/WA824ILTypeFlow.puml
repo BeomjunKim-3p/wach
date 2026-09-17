@@ -54,9 +54,13 @@ group decode3
 end
 
 group execute
-  ct --> rf : rs요청
-  rf -> db : [rs]
-  db -> pc : 16bitAdderA
+  ct --> rf : wrs << 1 요청
+  rf -> db : [wrs << 1]
+  db -> pc : 임시레지스터에 하위바이트 적재
+  ct --> rf : wrs << 1 + 1 요청
+  rf -> db : [wrs << 1 + 1]
+  db -> pc : 임시레지스터에 상위바이트 적재
+  ct --> pc : 16bitAdderA = 임시레지스터
   ct -> pc : ImmiGen, 16bitAdderB
   pc -> ad : 16bitAdderY
   ad --> me
