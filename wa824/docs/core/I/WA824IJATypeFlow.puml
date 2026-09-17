@@ -51,6 +51,11 @@ group decode3
   ct -> ct : immi[15:8] 저장
 end
 group execute
+  pc -> db : adder y
+  ct --> rf : 하위바이트 rdl 저장 요청
+  db -> rf
+  ct --> rf : 상위바이트 rdh 저장 요청
+  db -> rf
   ct -> pc : Immigen
   ct --> pc : PC_SET = Immigen
   ct --> pc : PC_NEXT

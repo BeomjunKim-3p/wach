@@ -41,5 +41,11 @@ else 인터럽트 존재
     end
   end
 end
+alt DMA 미존재
+  ct --> ct : 다음 DMA 탕색
+else DMA존재
+  ct -> ct : DBus2DLine off, Adderline High Z
+  ct -> ct : DMA[0, 1, 2]_req Low 될때까지 대기
+end
 
 @enduml
