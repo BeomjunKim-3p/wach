@@ -1,0 +1,29 @@
+BasedOnStyle: LLVM
+
+# tab 사용
+UseTab: Always
+TabWidth: 8
+IndentWidth: 8
+ContinuationIndentWidth: 8
+
+# switch에서 case를 추가 indent하지 않음
+IndentCaseLabels: false
+
+# 반환형 다음 줄에 함수 이름
+BreakAfterReturnType: AllDefinitions
+
+# 함수의 { 만 다음 줄
+# if/for/while/switch 등의 { 는 같은 줄
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterFunction: true
+  AfterControlStatement: Never
+  AfterStruct: false
+  AfterUnion: false
+  AfterEnum: false
+  AfterExternBlock: false
+  BeforeElse: false
+  BeforeWhile: false
+
+# 짧은 함수도 한 줄로 합치지 않음
+AllowShortFunctionsOnASingleLine: None

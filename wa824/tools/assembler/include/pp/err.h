@@ -1,0 +1,12 @@
+#ifndef WA824I_PP_ERR_H
+#define WA824I_PP_ERR_H
+
+enum PP_ERR_ {
+	PP_ERR_INTERNAL,
+	PP_ERR_INVAL_PARAM,
+	PP_ERR_INVAL_LINE_LEN,
+
+};
+
+#endif
+

@@ -1,0 +1,1 @@
+./../build/wa824i-as ./main.asm ./main.asm.pp
