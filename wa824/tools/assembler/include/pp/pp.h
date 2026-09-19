@@ -15,7 +15,7 @@ pp_init(OUT_ struct pp ** ALLOC_ pp, INOUT_ FILE *in, OUT_ FILE *out);
 PP_Result
 pp_run(INOUT_ struct pp *pp);
 
-PP_Result
+void
 pp_deinit(ALLOC_ TAKE_ struct pp *pp); 
 
 #endif
