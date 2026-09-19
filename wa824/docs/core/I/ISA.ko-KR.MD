@@ -39,43 +39,43 @@ shift계열의 경우
 SLT(U)의 경우: RD = (RS1 < RS2) ? 1 : 0
 
 # I-Type (상수계산)
-IMMIDIATE\[7:4\](4) FUNCT(4) RS(4) IMMIDIATE\[3:0\](4) OPCODE(4) RD(4)
+IMMEDIATE\[7:4\](4) FUNCT(4) RS(4) IMMEDIATE\[3:0\](4) OPCODE(4) RD(4)
 
 |operand|value|
 |--|--|
 |OPCODE|0x1|
 |RD|계산결과 저장할 레지스터|
 |RS|소스 1|
-|IMMIDIATE|소스 2 즉시값|
+|IMMEDIATE|소스 2 즉시값|
 
 FUNCT는 R-Type과 동일, subi 제외
 
 # L-Type
-IMMIDIATE\[11:4\](8) WRS(3) UNUSED(1) IMMIDIATE\[3:0\](4) OPCODE(4) RD(4)
+IMMEDIATE\[11:4\](8) WRS(3) UNUSED(1) IMMEDIATE\[3:0\](4) OPCODE(4) RD(4)
 |operand|value|
 |--|--|
 |OPCODE|0x2|
 |RD|값 저장할 레지스터|
 |WRS|값 읽어올 포인터|
-|IMMIDIATE|읽기 대상 포인터 오프셋(바이트기준; Signed)|
+|IMMEDIATE|읽기 대상 포인터 오프셋(바이트기준; Signed)|
 
 # S-Type
-IMMIDIATE\[11:4\](8) WRD(3) UNUSED(1) IMMIDIATE\[3:0\](4) OPCODE(4) RS(4) 
+IMMEDIATE\[11:4\](8) WRD(3) UNUSED(1) IMMEDIATE\[3:0\](4) OPCODE(4) RS(4) 
 |operand|value|
 |--|--|
 |OPCODE|0x3|
 |RS|값 읽어올 레지스터|
 |WRS|값 저장할 포인터|
-|IMMIDIATE|쓰기 대상 포인터 오프셋(바이트기준; Signed)|
+|IMMEDIATE|쓰기 대상 포인터 오프셋(바이트기준; Signed)|
 
 # B-Type
-IMMIDIATE\[7:4\](4) FUNCT(4) RS1(4) IMMIDIATE\[3:0\](4) OPCODE(4) RS2(4)
+IMMEDIATE\[7:4\](4) FUNCT(4) RS1(4) IMMEDIATE\[3:0\](4) OPCODE(4) RS2(4)
 |operand|value|
 |--|--|
 |OPCODE|0x04|
 |RS2|비교할 두번째 수|
 |RS1|비교할 첫번째 수|
-|IMMIDIATE|조건 만족시 이동할 오프셋(현재위치 기준; 바이트기준; Signed)|
+|IMMEDIATE|조건 만족시 이동할 오프셋(현재위치 기준; 바이트기준; Signed)|
 
 |FUNCT|세부기능|설명|
 |----|------|------|
@@ -92,39 +92,39 @@ J-Type foo bar baz
 으로 대체 가능하기 떄문에 생략
 
 # JA-Type (Absolute address)
-IMMIDIATE\[15:8\](8) IMMIDIATE\[7:0\](8) OPCODE(4) WRD(3) UNUSED(1)
+IMMEDIATE\[15:8\](8) IMMEDIATE\[7:0\](8) OPCODE(4) WRD(3) UNUSED(1)
 |operand|value|
 |--|--|
 |OPCODE|0x5|
 |WRD|Return address|
-|IMMIDIATE|Jump address|
+|IMMEDIATE|Jump address|
 
 WRD = PC + 3, 
-PC = IMMIDIATE
+PC = IMMEDIATE
 
 # JR-Type (Relative address)
-IMMIDIATE\[15:8\](8) IMMIDIATE\[7:0\](8) OPCODE(4) WRD(3) UNUSED(1)
+IMMEDIATE\[15:8\](8) IMMEDIATE\[7:0\](8) OPCODE(4) WRD(3) UNUSED(1)
 |operand|value|
 |--|--|
 |OPCODE|0x6|
 |WRD|Return address|
-|IMMIDIATE|Offset (Signed)|
+|IMMEDIATE|Offset (Signed)|
 
 WRD = PC + 3, 
-PC = PC + IMMIDIATE
+PC = PC + IMMEDIATE
 
 # JRP-Type (Pointer relative address)
-IMMIDIATE\[11:8\](4) WRS(3) UNUSED(1) IMMIDIATE\[7:0\](8) OPCODE(4) WRD(3) UNUSED(1)
+IMMEDIATE\[11:8\](4) WRS(3) UNUSED(1) IMMEDIATE\[7:0\](8) OPCODE(4) WRD(3) UNUSED(1)
 
 |operand|value|
 |--|--|
 |OPCODE|0x7|
 |WRD|Return address|
 |WRS|Jump address|
-|IMMIDIATE|Offset (Signed)|
+|IMMEDIATE|Offset (Signed)|
 
 WRD = PC + 3, 
-PC = *WRS + IMMIDIATE
+PC = *WRS + IMMEDIATE
 
 # SYSTEM
 INSTRUCTION_SPECIAL_RESERVED2\[7:4\](4) FUNCT(4) INSTRUCTION_SPECIAL_RESERVED1(4) INSTRUCTION_SPECIAL_RESERVED2\[3:0\](4) OPCODE(4) INSTRUCTION_SPECIAL_RESERVED0(4)
