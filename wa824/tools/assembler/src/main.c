@@ -4,10 +4,9 @@
 
 int main(int argc, char *argv[])
 {
-	printf("hello\n");
 
 	if (argc != 3) {
-		printf("[ERROR] Not enough arguments\n");
+		printf("[ERROR] Not enough arguments. $ %s <src_file> <dst_file>\n", argv[0]);
 		return -1;
 	}
 
@@ -28,18 +27,15 @@ int main(int argc, char *argv[])
 
 	tmp = pp_init(&pp, in, out);
 	if (!tmp.is_ok) {
-		printf("[ERROR] Failed to initialize preprocessor. errcode = %d\n", tmp.err);
+		printf("[ERROR] Failed to initialize preprocessor. PP_ERR_ = %d\n", tmp.err);
 	}
 
 	tmp = pp_run(pp);
 	if (!tmp.is_ok) {
-		printf("[ERROR] Failed to run preprocessor. errcode = %d\n", tmp.err);
+		printf("[ERROR] Failed to run preprocessor. PP_ERR_ = %d\n", tmp.err);
 	}
 
-	tmp = pp_deinit(pp);
-	if (!tmp.is_ok) {
-		printf("[ERROR] Failed to deinitialize preprocessor. errcode = %d\n", tmp.err);
-	}
+	pp_deinit(pp);
 	pp = NULL;
 
 	return 0;
