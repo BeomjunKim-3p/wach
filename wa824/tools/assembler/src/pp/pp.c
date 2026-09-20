@@ -33,6 +33,8 @@ s_run_line(struct pp *pp, const char rd_line[], size_t rd_line_len)
 			case '\r':
 				break;
 			case '\n':
+				if (wr_line[wr_line_len] == ' ') /* Delete White space */
+					wr_line_len--;
 				wr_line[wr_line_len] = rd_line[i];
 				wr_line_len++;
 				break;

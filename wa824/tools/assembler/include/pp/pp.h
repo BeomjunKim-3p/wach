@@ -3,9 +3,9 @@
 
 #include <stdio.h>
 #include <pp/result.h>
+#include <pp/def.h>
 #include <mac.h>
 
-#define PP_MAX_LINE_LEN 255
 
 struct pp;
 

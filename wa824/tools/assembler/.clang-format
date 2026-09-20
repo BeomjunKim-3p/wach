@@ -7,7 +7,7 @@ IndentWidth: 8
 ContinuationIndentWidth: 8
 
 # switch에서 case를 추가 indent하지 않음
-IndentCaseLabels: false
+IndentCaseLabels: true
 
 # 반환형 다음 줄에 함수 이름
 BreakAfterReturnType: AllDefinitions
