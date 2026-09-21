@@ -11,6 +11,7 @@ enum LEXER_ERR_ {
 	LEXER_ERR_INVAL_ASCII,	/* '<ascii>' form.  ex) 'A', 'B' */
 	LEXER_ERR_INVAL_STRING,
 	LEXER_ERR_INVAL_INTEGER,
+	LEXER_ERR_INVAL_SYNTAX,
 };
 
 

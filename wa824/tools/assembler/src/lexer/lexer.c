@@ -3,11 +3,14 @@
 #include <lexer/lexer.h>
 #include <lexer/result.h>
 #include <pp/def.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define DEFAULT_TOK_LINES_LEN 100
+#define DEFAULT_TOK_LINES_LEN 50
 #define DEFAULT_TOKS_LEN 6
+
+#define IS_ASCII(ch_) ((bool)((unsigned char)(ch_) <= 0x7Fu))
 
 struct lexer {
 	FILE *in;
@@ -20,7 +23,7 @@ enum LEXER_STATE_ {
 	LEXER_STATE_NORMAL,
 	LEXER_STATE_IDENTIFIER,
 	LEXER_STATE_STRING,
-	LEXER_STATE_CHAR,
+	LEXER_STATE_ASCII,
 	LEXER_STATE_INTEGER,
 };
 
@@ -103,7 +106,9 @@ s_resize_toks(struct lexer_tok_line *tok_line)
 						     DEFAULT_TOKS_LEN);
 	} else {
 		tmp_ptr = (struct lexer_tok *)realloc(
-			tok_line->toks, tok_line->toks_cap + DEFAULT_TOKS_LEN);
+			tok_line->toks,
+			sizeof(struct lexer_tok) *
+				(tok_line->toks_cap + DEFAULT_TOKS_LEN));
 	}
 
 	if (!tmp_ptr)
@@ -152,7 +157,8 @@ s_resize_tok_lines(struct lexer *lexer)
 	} else {
 		tmp_ptr = (struct lexer_tok_line *)realloc(
 			lexer->tok_lines,
-			lexer->tok_lines_cap + DEFAULT_TOK_LINES_LEN);
+			sizeof(struct lexer_tok_line) *
+				(lexer->tok_lines_cap + DEFAULT_TOK_LINES_LEN));
 	}
 
 	if (!tmp_ptr)
@@ -231,6 +237,34 @@ s_insert_char2lexeme(struct lexer_tok *tok, char ch)
 	return LEXER_RESULT_OK;
 }
 
+static inline bool
+s_can_end_integer_tok(char ch)
+{
+	switch (ch) {
+		case ' ':
+		case '\n':
+		case '(':
+		case ',':
+			return true;
+	}
+	return false;
+}
+
+static inline bool
+s_can_end_identifier_tok(char ch)
+{
+	switch (ch) {
+		case ',':
+		case '\n':
+		case ' ':
+		case '(':
+		case ')':
+			return true;
+	}
+
+	return false;
+}
+
 static Lexer_Result
 s_run_line(struct lexer_tok_line *tok_line, const char rd_line[],
 	   size_t rd_line_len)
@@ -265,16 +299,6 @@ s_run_line(struct lexer_tok_line *tok_line, const char rd_line[],
 							LEXER_TOK_KIND_NEWLINE;
 						TOKS_LEN++;
 						goto END;
-					case '\"':
-						TOK.kind =
-							LEXER_TOK_KIND_STRING;
-						state = LEXER_STATE_STRING;
-						break;
-					case '\'':
-						TOK.kind =
-							LEXER_TOK_KIND_INTEGER;
-						state = LEXER_STATE_CHAR;
-						break;
 					case ' ':
 						break;
 					case ',':
@@ -285,13 +309,36 @@ s_run_line(struct lexer_tok_line *tok_line, const char rd_line[],
 						TOK.kind = LEXER_TOK_KIND_COLON;
 						TOKS_LEN++;
 						break;
+					case '(':
+						TOK.kind =
+							LEXER_TOK_KIND_L_PARENTHESES;
+						TOKS_LEN++;
+						break;
+					case ')':
+						TOK.kind =
+							LEXER_TOK_KIND_R_PARENTHESES;
+						TOKS_LEN++;
+						break;
+					case '\"':
+						TOK.kind =
+							LEXER_TOK_KIND_STRING;
+						state = LEXER_STATE_STRING;
+						break;
+					case '\'':
+						TOK.kind =
+							LEXER_TOK_KIND_INTEGER;
+						state = LEXER_STATE_ASCII;
+						break;
 					default:
-						if (isdigit(ch)) {
+						if (isdigit((
+							    unsigned char)ch)) {
 							TOK.kind =
 								LEXER_TOK_KIND_INTEGER;
 							state = LEXER_STATE_INTEGER;
-						} else if (isalpha(ch) ||
-							   ch == '_') {
+						} else if (
+							isalpha((unsigned char)
+									ch) ||
+							ch == '_') {
 							TOK.kind =
 								LEXER_TOK_KIND_IDENTIFIER;
 							state = LEXER_STATE_IDENTIFIER;
@@ -306,26 +353,17 @@ s_run_line(struct lexer_tok_line *tok_line, const char rd_line[],
 				}
 				break;
 			case LEXER_STATE_IDENTIFIER:
-				switch (ch) {
-					case ',':
-						/* fall through */
-					case '\n':
-						i--;
-						/* fall through */
-					case ' ':
-						TOKS_LEN++;
-						state = LEXER_STATE_NORMAL;
-						break;
-					default:
-						if (!isalpha(ch) &&
-						    !isdigit(ch) && ch != '_')
-							return LEXER_RESULT_ERR(
-								LEXER_ERR_INVAL_CHAR);
-
-						result = s_insert_char2lexeme(
-							&TOK, ch);
-						LEXER_RET_IF_ERR(result);
-						break;
+				if (isalpha((unsigned char)ch) ||
+				    isdigit((unsigned char)ch) || ch == '_') {
+					result = s_insert_char2lexeme(&TOK, ch);
+					LEXER_RET_IF_ERR(result);
+				} else if (s_can_end_identifier_tok(ch)) {
+					TOKS_LEN++;
+					i--;
+					state = LEXER_STATE_NORMAL;
+				} else {
+					return LEXER_RESULT_ERR(
+						LEXER_ERR_INVAL_CHAR);
 				}
 				break;
 			case LEXER_STATE_STRING:
@@ -334,10 +372,6 @@ s_run_line(struct lexer_tok_line *tok_line, const char rd_line[],
 						TOKS_LEN++;
 						state = LEXER_STATE_NORMAL;
 						break;
-					case '\n':
-						return LEXER_RESULT_ERR(
-							LEXER_ERR_INVAL_STRING);
-						break;
 					default:
 						result = s_insert_char2lexeme(
 							&TOK, ch);
@@ -345,42 +379,33 @@ s_run_line(struct lexer_tok_line *tok_line, const char rd_line[],
 						break;
 				}
 				break;
-			case LEXER_STATE_CHAR:
-				switch (ch) {
-					case '\'':
-						TOKS_LEN++;
-						state = LEXER_STATE_NORMAL;
-						break;
-					default:
-						if (was_prev_char)
-							return LEXER_RESULT_ERR(
-								LEXER_ERR_INVAL_ASCII);
-						was_prev_char = true;
-						s_insert_char2lexeme(&TOK, ch);
-						break;
+			case LEXER_STATE_ASCII:
+				if (ch == '\'') { /* Always first */
+					was_prev_char = false;
+					TOKS_LEN++;
+					state = LEXER_STATE_NORMAL;
+				} else if (IS_ASCII(ch)) {
+					if (was_prev_char)
+						return LEXER_RESULT_ERR(
+							LEXER_ERR_INVAL_ASCII);
+					was_prev_char = true;
+					TOK.val.integer = (int64_t)ch;
+				} else {
+					return LEXER_RESULT_ERR(
+						LEXER_ERR_INVAL_ASCII);
 				}
-
 				break;
 			case LEXER_STATE_INTEGER:
-				switch (ch) {
-					case ',':
-						/* fall through */
-					case '\n':
-						i--;
-						/* fall through */
-					case ' ':
-						TOKS_LEN++;
-						state = LEXER_STATE_NORMAL;
-						break;
-					default:
-						if (!isdigit(ch))
-							return LEXER_RESULT_ERR(
-								LEXER_ERR_INVAL_INTEGER);
-
-						result = s_insert_char2lexeme(
-							&TOK, ch);
-						LEXER_RET_IF_ERR(result);
-						break;
+				if (isdigit((unsigned char)ch)) {
+					result = s_insert_char2lexeme(&TOK, ch);
+					LEXER_RET_IF_ERR(result);
+				} else if (s_can_end_integer_tok(ch)) {
+					TOKS_LEN++;
+					i--;
+					state = LEXER_STATE_NORMAL;
+				} else {
+					return LEXER_RESULT_ERR(
+						LEXER_ERR_INVAL_INTEGER);
 				}
 				break;
 			default:
@@ -389,6 +414,8 @@ s_run_line(struct lexer_tok_line *tok_line, const char rd_line[],
 		}
 	}
 
+	if (state != LEXER_STATE_NORMAL)
+		return LEXER_RESULT_ERR(LEXER_ERR_INVAL_SYNTAX);
 END:
 	return LEXER_RESULT_OK;
 
