@@ -33,7 +33,7 @@ s_run_line(struct pp *pp, const char rd_line[], size_t rd_line_len)
 			case '\r':
 				break;
 			case '\n':
-				wr_line[wr_line_len] = '\n';
+				wr_line[wr_line_len] = rd_line[i];
 				wr_line_len++;
 				break;
 			case '\t':
@@ -54,13 +54,14 @@ s_run_line(struct pp *pp, const char rd_line[], size_t rd_line_len)
 			break;
 		case PP_STATE_LINE_COMMENT:
 			switch (rd_line[i]) {
-			case '\n':
-				wr_line[wr_line_len] = '\n';
-				wr_line_len++;
-				/* fall through */
 			case '\r':
+				break;
+			case '\n':
+				wr_line[wr_line_len] = rd_line[i];
+				wr_line_len++;
 				pp->state = PP_STATE_NORMAL;
 				break;
+
 			default:
 				break;
 			}
@@ -83,22 +84,22 @@ s_run_line(struct pp *pp, const char rd_line[], size_t rd_line_len)
 		}
 	}
 
-	wr_line[wr_line_len - 1] = '\0';
+	wr_line[wr_line_len] = '\0';
 
 	return EOF == fputs(wr_line, pp->out)
-		       ? (PP_Result){.is_ok = false, .err = PP_ERR_INTERNAL}
-		       : (PP_Result){.is_ok = true, .err = 0};
+		       ? PP_RESULT_ERR(PP_ERR_INTERNAL)
+		       : PP_RESULT_OK;
 }
 
 PP_Result
 pp_init(struct pp **pp, FILE *in, FILE *out)
 {
 	if (!pp || !in || !out)
-		return (PP_Result){.is_ok = false, .err = PP_ERR_INVAL_PARAM};
+		return PP_RESULT_ERR(PP_ERR_INVAL_PARAM);
 
 	*pp = (struct pp *)malloc(sizeof(struct pp));
 	if (!*pp)
-		return (PP_Result){.is_ok = false, .err = PP_ERR_INTERNAL};
+		return PP_RESULT_ERR(PP_ERR_OOM);
 
 	(*pp)->in = in;
 	(*pp)->out = out;
@@ -107,7 +108,7 @@ pp_init(struct pp **pp, FILE *in, FILE *out)
 	fseek(in, 0, SEEK_SET);
 	fseek(out, 0, SEEK_SET);
 
-	return (PP_Result){.is_ok = true, .err = 0};
+	return PP_RESULT_OK;
 }
 
 PP_Result
@@ -121,30 +122,22 @@ pp_run(INOUT_ struct pp *pp)
 		const size_t line_len = strlen(line);
 
 		if (!line_len)
-			return (PP_Result){.is_ok = false,
-					   .err = PP_ERR_INTERNAL};
+			return PP_RESULT_ERR(PP_ERR_INTERNAL);
 		/* Every line must be finished with '\n' */
 		if (line[line_len - 1] != '\n')
-			return (PP_Result){.is_ok = false,
-					   .err = PP_ERR_INVAL_LINE_LEN};
+			return PP_RESULT_ERR(PP_ERR_INVAL_LINE_LEN);
 
-		const PP_Result ret = s_run_line(pp, line, line_len);
-		if (!ret.is_ok)
-			return ret;
+		const PP_Result result = s_run_line(pp, line, line_len);
+		PP_RET_IF_ERR(result);
 	}
 
 	return feof(pp->in)
-		       ? (PP_Result){.is_ok = true, .err = 0}
-		       : (PP_Result){.is_ok = false, .err = PP_ERR_INTERNAL};
+		       ? PP_RESULT_OK
+		       : PP_RESULT_ERR(PP_ERR_INTERNAL);
 }
 
-PP_Result
+void
 pp_deinit(struct pp *pp)
 {
-	if (!pp)
-		return (PP_Result){.is_ok = false, .err = PP_ERR_INVAL_PARAM};
-
 	free(pp);
-
-	return (PP_Result){.is_ok = true, .err = 0};
 }

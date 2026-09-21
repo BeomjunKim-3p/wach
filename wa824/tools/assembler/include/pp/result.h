@@ -9,4 +9,15 @@ typedef struct pp_result {
 	enum PP_ERR_ err;
 } PP_Result;
 
+#define PP_RESULT_ERR(err_) (PP_Result){.is_ok = false, .err = err_}
+#define PP_RESULT_OK (PP_Result){.is_ok = true, .err = 0}
+
+
+#define PP_RET_IF_ERR(result_) 		\
+	do {				\
+		if (!result.is_ok)	\
+			return result;	\
+	} while (0)
+
+
 #endif
