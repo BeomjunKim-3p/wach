@@ -5,8 +5,7 @@
 #include <mac.h>
 #include <stdio.h>
 #include <stdint.h>
-
-#define LEXER_MAX_LEXEME_LEN 30
+#include <lexer/def.h>
 
 enum LEXER_TOK_KIND_ {
 	/*
@@ -19,6 +18,7 @@ enum LEXER_TOK_KIND_ {
 	LEXER_TOK_KIND_STRING,
 	LEXER_TOK_KIND_COMMA,
 	LEXER_TOK_KIND_INTEGER,
+	LEXER_TOK_KIND_COLON,
 };
 
 struct lexer_tok {
@@ -48,5 +48,11 @@ lexer_run(INOUT_ struct lexer *lexer);
 
 void
 lexer_deinit(TAKE_ ALLOC_ struct lexer *lexer);
+
+/*
+ * @return tok_lines_len
+ * */
+Lexer_Result
+lexer_get_tok_lines(INOUT_ struct lexer *lexer, OUT_  const struct lexer_tok_line **tok_lines, OUT_ size_t *tok_lines_len);
 
 #endif
