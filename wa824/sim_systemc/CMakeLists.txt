@@ -77,12 +77,13 @@ if(TESTBENCH_MODULE)
 	target_compile_definitions(WA824 INTERFACE "USE_TESTBENCH")
 endif()
 
+include(FetchContent)
 
-if(DEFINED ENV{SYSTEMC_HOME})
-    list(APPEND CMAKE_PREFIX_PATH "$ENV{SYSTEMC_HOME}")
-else()
-    message(FATAL_ERROR "[CMake ERROR] SYSTEMC_HOME environment variable is not defined.")
-endif()
+FetchContent_Declare(
+	SystemCLanguage
+	URL https://github.com/accellera-official/systemc/archive/refs/tags/3.0.2.tar.gz
+)
 
-find_package(SystemCLanguage REQUIRED CONFIG)
+FetchContent_MakeAvailable(SystemCLanguage)
+
 target_link_libraries(WA824 INTERFACE SystemC::systemc)
