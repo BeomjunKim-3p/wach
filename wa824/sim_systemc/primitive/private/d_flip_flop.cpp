@@ -11,10 +11,10 @@ namespace thpg::primitive {
 		sensitive << clk.pos();
 	
 		if (tf) {
-			sc_trace(tf, d, (std::string(this->name()) + "(shifter)" + ".b").c_str());
-			sc_trace(tf, clk, (std::string(this->name()) + "(shifter)" + ".is_rotate").c_str());
-			sc_trace(tf, q, (std::string(this->name()) + "(shifter)" + ".direction_right").c_str());
-			sc_trace(tf, q_bar, (std::string(this->name()) + "(shifter)" + ".out").c_str());
+			sc_trace(tf, d, (std::string(this->name()) + "(DFlipFlop)" + ".b").c_str());
+			sc_trace(tf, clk, (std::string(this->name()) + "(DFlipFlop)" + ".is_rotate").c_str());
+			sc_trace(tf, q, (std::string(this->name()) + "(DFlipFlop)" + ".direction_right").c_str());
+			sc_trace(tf, q_bar, (std::string(this->name()) + "(DFlipFlop)" + ".out").c_str());
 		}
 	}
 
