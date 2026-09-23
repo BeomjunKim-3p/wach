@@ -1,5 +1,5 @@
-#ifndef WA824I_PP_ERR_H
-#define WA824I_PP_ERR_H
+#ifndef WA824I_PP_ERR_H_
+#define WA824I_PP_ERR_H_
 
 enum PP_ERR_ {
 	PP_ERR_INTERNAL,

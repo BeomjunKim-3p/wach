@@ -28,67 +28,71 @@ s_run_line(struct pp *pp, const char rd_line[], size_t rd_line_len)
 	size_t i;
 	for (i = 0; i < rd_line_len; ++i) {
 		switch (pp->state) {
-		case PP_STATE_NORMAL:
-			switch (rd_line[i]) {
-			case '\r':
+			case PP_STATE_NORMAL:
+				switch (rd_line[i]) {
+					case '\r':
+						break;
+					case '\n':
+						wr_line[wr_line_len] =
+							rd_line[i];
+						wr_line_len++;
+						break;
+					case '\t':
+						/* fall through */
+					case ' ':
+						wr_line[wr_line_len] = ' ';
+						wr_line_len++;
+						pp->state =
+							PP_STATE_WHITE_SPACE;
+						break;
+					case ';':
+						pp->state =
+							PP_STATE_LINE_COMMENT;
+						break;
+					default:
+						wr_line[wr_line_len] =
+							rd_line[i];
+						wr_line_len++;
+						break;
+				}
 				break;
-			case '\n':
-				wr_line[wr_line_len] = rd_line[i];
-				wr_line_len++;
-				break;
-			case '\t':
-				/* fall through */
-			case ' ':
-				wr_line[wr_line_len] = ' ';
-				wr_line_len++;
-				pp->state = PP_STATE_WHITE_SPACE;
-				break;
-			case ';':
-				pp->state = PP_STATE_LINE_COMMENT;
-				break;
-			default:
-				wr_line[wr_line_len] = rd_line[i];
-				wr_line_len++;
-				break;
-			}
-			break;
-		case PP_STATE_LINE_COMMENT:
-			switch (rd_line[i]) {
-			case '\r':
-				break;
-			case '\n':
-				wr_line[wr_line_len] = rd_line[i];
-				wr_line_len++;
-				pp->state = PP_STATE_NORMAL;
-				break;
+			case PP_STATE_LINE_COMMENT:
+				switch (rd_line[i]) {
+					case '\r':
+						break;
+					case '\n':
+						wr_line[wr_line_len] =
+							rd_line[i];
+						wr_line_len++;
+						pp->state = PP_STATE_NORMAL;
+						break;
 
+					default:
+						break;
+				}
+				break;
+			case PP_STATE_WHITE_SPACE:
+				switch (rd_line[i]) {
+					case '\t':
+						/* fall through */
+					case ' ':
+						break;
+					default:
+						pp->state = PP_STATE_NORMAL;
+						i--;
+						break;
+				}
+				break;
 			default:
+				assert(0);
 				break;
-			}
-			break;
-		case PP_STATE_WHITE_SPACE:
-			switch (rd_line[i]) {
-			case '\t':
-				/* fall through */
-			case ' ':
-				break;
-			default:
-				pp->state = PP_STATE_NORMAL;
-				i--;
-				break;
-			}
-			break;
-		default:
-			assert(0);
-			break;
 		}
 	}
 
 	wr_line[wr_line_len] = '\0';
 
-	return EOF == fputs(wr_line, pp->out)
-		       ? PP_RESULT_ERR(PP_ERR_INTERNAL)
-		       : PP_RESULT_OK;
+	return EOF == fputs(wr_line, pp->out) ? PP_RESULT_ERR(PP_ERR_INTERNAL)
+					      : PP_RESULT_OK;
 }
 
 PP_Result
@@ -104,9 +108,6 @@ pp_init(struct pp **pp, FILE *in, FILE *out)
 	(*pp)->in = in;
 	(*pp)->out = out;
 	(*pp)->state = PP_STATE_NORMAL;
-
-	fseek(in, 0, SEEK_SET);
-	fseek(out, 0, SEEK_SET);
 
 	return PP_RESULT_OK;
 }
@@ -131,9 +132,7 @@ pp_run(INOUT_ struct pp *pp)
 		PP_RET_IF_ERR(result);
 	}
 
-	return feof(pp->in)
-		       ? PP_RESULT_OK
-		       : PP_RESULT_ERR(PP_ERR_INTERNAL);
+	return feof(pp->in) ? PP_RESULT_OK : PP_RESULT_ERR(PP_ERR_INTERNAL);
 }
 
 void

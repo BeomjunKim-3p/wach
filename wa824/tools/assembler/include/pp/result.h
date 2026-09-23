@@ -1,5 +1,5 @@
-#ifndef WA824I_PP_RESULT_H
-#define WA824I_PP_RESULT_H
+#ifndef WA824I_PP_RESULT_H_
+#define WA824I_PP_RESULT_H_
 
 #include <pp/err.h>
 #include <stdbool.h>

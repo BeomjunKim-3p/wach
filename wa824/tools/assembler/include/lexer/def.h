@@ -1,7 +1,6 @@
 #ifndef WA824I_LEXER_DEF_H_
 #define WA824I_LEXER_DEF_H_
 
-#define LEXER_MAX_LEXEME_LEN 30
 
 
 #endif

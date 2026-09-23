@@ -18,6 +18,7 @@ set(CMAKE_C_EXTENSIONS OFF)
 add_library(as_core STATIC
 	src/pp/pp.c
 	src/lexer/lexer.c
+	src/as/err.c
 )
 
 target_include_directories(as_core
