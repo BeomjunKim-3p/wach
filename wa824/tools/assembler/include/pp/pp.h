@@ -1,5 +1,5 @@
-#ifndef WA824I_PP_PP_H
-#define WA824I_PP_PP_H
+#ifndef WA824I_PP_PP_H_
+#define WA824I_PP_PP_H_
 
 #include <stdio.h>
 #include <pp/result.h>

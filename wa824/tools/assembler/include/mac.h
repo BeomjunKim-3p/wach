@@ -1,5 +1,5 @@
-#ifndef WA824I_MAC_H
-#define WA824I_MAC_H
+#ifndef WA824I_MAC_H_
+#define WA824I_MAC_H_
 
 /*
  * 서로 다른 블럭(-----)에 있는 매크로는 함께 쓰일 수 있다. 
