@@ -1,168 +1,94 @@
-#include "alu.h"
 #include <systemc.h>
+#include "alu.h"
 
-namespace thpg::core::i {
-	ALU::ALU(sc_module_name name, sc_trace_file *tf)
-		: sc_module(name),
-		andgate{"AndGate", tf},
-		orgate{"OrGate", tf},
-		xorgate{"XorGate", tf},
-		adder{"Adder", tf},
-		subtractor{"Subtractor", tf},
-		shifter{"Shifter", tf},
-		comparator{"Comparator", tf},
-		outmux{"outmux"}
-	{
-		SC_METHOD(refresh);
-		sensitive << a << b << carry << is_rotate << direction_right << inst_in;
+thpg::wa824::ALU::ALU(sc_module_name name, sc_trace_file *tf)
+	: sc_module(name)
+{
+	SC_METHOD(refresh);
+	sensitive << a << b << funct << carry_in;
 
-		SC_METHOD(cmpref);
-		sensitive << less << equal << greater;
-
-		SC_METHOD(invref);
-		sensitive << invert << b;
-
-		andgate.a(a);
-		andgate.b(b);
-		andgate.out(andout);
-
-		orgate.a(a);
-		orgate.b(b);
-		orgate.out(orout);
-
-		xorgate.a(a);
-		xorgate.b(b);
-		xorgate.out(xorout);
-
-		adder.a(a);
-		//adder.b(b);
-		adder.b(invb);
-		adder.carry_in(carry);
-		adder.out(adderout);
-		adder.carry_out(addercarryout);
-
-
-		shifter.a(a);
-		shifter.b(b);
-		shifter.is_rotate(is_rotate);
-		shifter.direction_right(direction_right);
-		shifter.out(shifterout);
-
-		comparator.a(a);
-		comparator.b(b);
-		comparator.less(less);
-		comparator.equal(equal);
-		comparator.greater(greater);
-
-		outmux.in[0](andout);
-		outmux.in[1](orout);
-		outmux.in[2](xorout);
-		outmux.in[3](adderout);
-		outmux.in[5](shifterout);
-		outmux.in[6](cmpout);
-		outmux.out(muxout);
-		outmux.sel(muxsel);
-
-		
-		if (tf) {
-			sc_trace(tf, a, (std::string(this->name()) + "(alu)" + ".a").c_str());
-			sc_trace(tf, b, (std::string(this->name()) + "(alu)" + ".b").c_str());
-			sc_trace(tf, carry, (std::string(this->name()) + "(alu)" + ".carry").c_str());
-			sc_trace(tf, is_rotate, (std::string(this->name()) + "(alu)" + ".is_rotate").c_str());
-			sc_trace(tf, direction_right, (std::string(this->name()) + "(alu)" + ".direction_right").c_str());
-			sc_trace(tf, inst_in, (std::string(this->name()) + "(alu)" + ".inst_in").c_str());
-			sc_trace(tf, y, (std::string(this->name()) + "(alu)" + ".y").c_str());
-			sc_trace(tf, flag_out, (std::string(this->name()) + "(alu)" + ".flag_out").c_str());
-			sc_trace(tf, andout, (std::string(this->name()) + "(alu)" + ".andout").c_str());
-			sc_trace(tf, orout, (std::string(this->name()) + "(alu)" + ".orout").c_str());
-			sc_trace(tf, xorout, (std::string(this->name()) + "(alu)" + ".xorout").c_str());
-			sc_trace(tf, carryout, (std::string(this->name()) + "(alu)" + ".carryout").c_str());
-			sc_trace(tf, invb, (std::string(this->name()) + "(alu)" + ".invb").c_str());
-			sc_trace(tf, adderout, (std::string(this->name()) + "(alu)" + ".adderout").c_str());
-			sc_trace(tf, addercarryout, (std::string(this->name()) + "(alu)" + ".addercarryout").c_str());
-			sc_trace(tf, subtractorcarryout, (std::string(this->name()) + "(alu)" + ".subtractorcarryout").c_str());
-			sc_trace(tf, shifterout, (std::string(this->name()) + "(alu)" + ".shifterout").c_str());
-			sc_trace(tf, less, (std::string(this->name()) + "(alu)" + ".less").c_str());
-			sc_trace(tf, equal, (std::string(this->name()) + "(alu)" + ".equal").c_str());
-			sc_trace(tf, greater, (std::string(this->name()) + "(alu)" + ".greater").c_str());
-			sc_trace(tf, muxout, (std::string(this->name()) + "(alu)" + ".muxout").c_str());
-			sc_trace(tf, muxsel, (std::string(this->name()) + "(alu)" + ".muxsel").c_str());
-		}
-	}
-
-	void ALU::cmpref(void)
-	{
-		sc_lv<8> temp(8);
-		temp[0] = less.read();
-		temp[1] = equal.read();
-		temp[2] = greater.read();
-		temp[3] = SC_LOGIC_0;
-		temp[4] = SC_LOGIC_0;
-		temp[5] = SC_LOGIC_0;
-		temp[6] = SC_LOGIC_0;
-		temp[7] = SC_LOGIC_0;
-		cmpout.write(temp);
-	}
-
-	void ALU::invref(void)
-	{
-		if (invert.read() == SC_LOGIC_1) {
-			invb = ~b.read();
-		}else {
-			invb = b.read();
-		}
-	}
-
-	void ALU::refresh(void)
-	{
-		[&]{
-			if (!(a.read().is_01() && b.read().is_01() && carry.read().is_01() && inst_in.read().is_01() && invert.read().is_01())) {
-				y.write(sc_lv<8>(SC_LOGIC_X));
-				return;
-			}
-			y.write(muxout);
-
-			switch (inst_in.read().to_uint()) {
-				case 0:
-					//add
-					muxsel.write(3);
-					break;
-
-				case 1:
-					//and
-					muxsel.write(0);
-					break;
-
-				case 2:
-					//or
-					muxsel.write(1);
-					break;
-
-				case 3:
-					//xor
-					muxsel.write(2);
-					break;
-
-				case 4:
-					//shift
-					muxsel.write(5);
-					break;
-
-				case 5:
-					//cmp
-					muxsel.write(6);
-					break;
-			}
-
-			sc_lv<4> temp;
-			temp[3] = muxout.read()[8]; // N
-			temp[2] = muxout.read().to_uint() == 0 ? SC_LOGIC_1 : SC_LOGIC_0; // Z
-			temp[1] = addercarryout.read(); // C
-			temp[0] = (carry.read() ^ addercarryout.read()); // V
-			flag_out.write(temp);
-		}();
+	if (tf) {
+		std::string mn = std::string(this->name()) + "(ALU)";
+		sc_trace(tf, a,        (mn + ".A").c_str());
+		sc_trace(tf, b,        (mn + ".B").c_str());
+		sc_trace(tf, funct,    (mn + ".FUNCT").c_str());
+		sc_trace(tf, carry_in, (mn + ".CARRY_IN").c_str());
+		sc_trace(tf, y,        (mn + ".Y").c_str());
+		sc_trace(tf, flags,    (mn + ".FLAGS").c_str());
 	}
 }
 
+void thpg::wa824::ALU::refresh(void)
+{
+	[&]{
+		if (!a.read().is_01() || !b.read().is_01() ||
+		    !funct.read().is_01() || !carry_in.read().is_01()) {
+			y.write(sc_lv<8>(SC_LOGIC_X));
+			flags.write(sc_lv<4>(SC_LOGIC_X));
+			return;
+		}
 
+		sc_uint<9> va = a.read().to_uint();
+		sc_uint<9> vb = b.read().to_uint();
+		sc_int<8>  sa = sc_int<8>(a.read().to_uint());
+		sc_int<8>  sb = sc_int<8>(b.read().to_uint());
+		bool       ci = carry_in.read().to_bool();
 
+		sc_uint<9> res9 = 0;
+		sc_uint<8> res  = 0;
+		bool       carry_out = false;
+		bool       overflow  = false;
+
+		switch (funct.read().to_uint()) {
+			case 0x0: // ADD
+				res9 = va + vb + (sc_uint<9>)ci;
+				res  = res9.range(7, 0);
+				carry_out = res9[8].to_bool();
+				overflow  = (~(va ^ vb) & (va ^ res9) & 0x80) != 0;
+				break;
+			case 0x1: // SUB
+				res9 = va - vb - (sc_uint<9>)ci;
+				res  = res9.range(7, 0);
+				carry_out = res9[8].to_bool();
+				overflow  = ((va ^ vb) & (va ^ res9) & 0x80) != 0;
+				break;
+			case 0x2: // AND
+				res = va & vb;
+				break;
+			case 0x3: // OR
+				res = va | vb;
+				break;
+			case 0x4: // XOR
+				res = va ^ vb;
+				break;
+			case 0x5: // SLL
+				res = va << (vb & 0x7);
+				break;
+			case 0x6: // SRL
+				res = va >> (vb & 0x7);
+				break;
+			case 0x7: // SRA
+				res = (sc_uint<8>)((sc_int<8>)sa >> (vb & 0x7));
+				break;
+			case 0x8: // SLT (signed)
+				res = (sa < sb) ? 1 : 0;
+				break;
+			case 0x9: // SLTU (unsigned)
+				res = (va < vb) ? 1 : 0;
+				break;
+			default:
+				y.write(sc_lv<8>(SC_LOGIC_X));
+				flags.write(sc_lv<4>(SC_LOGIC_X));
+				return;
+		}
+
+		y.write(sc_lv<8>(res));
+
+		sc_lv<4> f;
+		f[3] = (res[7] == SC_LOGIC_1) ? SC_LOGIC_1 : SC_LOGIC_0; // N
+		f[2] = (res == 0)              ? SC_LOGIC_1 : SC_LOGIC_0; // Z
+		f[1] = carry_out               ? SC_LOGIC_1 : SC_LOGIC_0; // C
+		f[0] = overflow                ? SC_LOGIC_1 : SC_LOGIC_0; // V
+		flags.write(f);
+	}();
+}

@@ -15,9 +15,10 @@ export namespace thpg::primitive {
 		sc_in<sc_logic> wr_bar{"WR\'"};
 		sc_in<bool> clk{"CLK"};
 		sc_inout_rv<N> data{"DATA"};
+		sc_in<bool> reset{"reset"};
 		sc_out<sc_lv<N>> alwaysout{"ALWAYSOUT"};
 
-		RegisterREdge(sc_module_name name);
+		RegisterREdge(sc_module_name name, sc_trace_file *tf = nullptr);
 
 		// 레지스터가 아닌 사용하는쪽 입장에서의 함수명
 		//// 레지스터가 출력
