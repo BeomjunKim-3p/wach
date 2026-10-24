@@ -155,3 +155,14 @@ INSTRUCTION_SPECIAL_RESERVED:
 |0|UNUSED|
 |1|UNUSED|
 |2|UNUSED|
+
+Zicsr 확장 없는 경우 ECALL, EBRAKE는 nop으로 취급됨. MRET의 경우 invop.
+단, 외부 ECALL, EBRAKE핀으로 디버깅 위해 신호 전송됨.
+ECALL, EBREAK핀의 경우 해당 명령어가 파이프라인 EX단계에 있는동안 High
+해당 아키텍쳐가 인터럽트 지원하지 않는 경우 invop등의 예외는 발생하지 않고 그대로 진행.
+Zifencei확장 없는경우 I-Cache와 D-Cache간의 일관성 보장하지 않음.
+단, 외부 디버깅용 핀으로 ICacheFlush, DCacheFlush핀 주어짐. 
+D-Cache 수정 후 메모리 반영 위해 DCacheFlush는 Flush이전에 메모리로 값 모두 복사 후 Flush. 따라 외부 디버거나 프론트패널등에서 원활한 중지 및 시작 위해 DCacheFlush동안 DCacheBusy핀 High상태 유지.
+DCacheFlush동안 데이터 정합성 유지 위해 파이프라인 전체 Stall
+
+
