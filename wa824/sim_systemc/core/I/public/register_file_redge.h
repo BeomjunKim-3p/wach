@@ -38,8 +38,13 @@ namespace thpg::wa824 {
 		// combinational: alwaysout → rs1/rs2/wrs 멀티플렉싱
 		void refresh_read(void);
 
+		// 디버거용 레지스터 내용 조회 (0..15, x0l..x7h)
+		sc_lv<8> debug_reg(unsigned int index) const {
+			return index < 16 ? ralwaysout[index].read() : sc_lv<8>(SC_LOGIC_X);
+		}
+
 	private:
-		sc_vector<thpg::primitive::RegisterREdge<8>> rregister{"RF_REGISTER", 16};
+		sc_vector<thpg::primitive::RegisterREdge<8>> rregister{"RF_REGISTER"};
 		sc_vector<sc_signal<sc_logic>>  rcs       {"RF_CS",        16};
 		sc_vector<sc_signal<sc_logic>>  rwr_bar   {"RF_WR",        16};
 		sc_vector<sc_signal_rv<8>>      rdata_in  {"RF_DATA_IN",   16};

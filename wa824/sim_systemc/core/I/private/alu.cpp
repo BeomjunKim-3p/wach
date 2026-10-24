@@ -85,7 +85,7 @@ void thpg::wa824::ALU::refresh(void)
 		y.write(sc_lv<8>(res));
 
 		sc_lv<4> f;
-		f[3] = (res[7] == SC_LOGIC_1) ? SC_LOGIC_1 : SC_LOGIC_0; // N
+		f[3] = res[7] ? SC_LOGIC_1 : SC_LOGIC_0; // N
 		f[2] = (res == 0)              ? SC_LOGIC_1 : SC_LOGIC_0; // Z
 		f[1] = carry_out               ? SC_LOGIC_1 : SC_LOGIC_0; // C
 		f[0] = overflow                ? SC_LOGIC_1 : SC_LOGIC_0; // V

@@ -23,6 +23,7 @@ namespace thpg::wa824 {
 		sc_out<sc_lv<12>> imme_ls {"IMME_LS"};
 
 		// B-Type: imm[7:0] signed, {imm[7:4]=inst[19:16], imm[3:0]=inst[15:12]}
+		sc_out<sc_lv<8>>  imme_b  {"IMME_B"};
 
 		// JA/JR-Type: imm[15:0], {imm[15:8]=inst[23:16], imm[7:0]=inst[15:8]}
 		sc_out<sc_lv<16>> imme_ja {"IMME_JA"};

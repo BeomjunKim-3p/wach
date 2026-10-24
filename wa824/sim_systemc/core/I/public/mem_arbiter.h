@@ -3,7 +3,7 @@
 
 // Memory Arbiter
 // I-Cache와 D-Cache의 메인 메모리 접근 충돌 중재
-// 우선순위: D-Cache > I-Cache
+// 우선순위: D-Cache > I-Cache (단, I-Cache 3바이트 버스트 중에는 I-Cache 유지)
 //
 // 메인 메모리 인터페이스 (외부):
 //   mem_addr, mem_wdata, mem_we, mem_re → 메인 메모리
@@ -54,5 +54,11 @@ namespace thpg::wa824 {
 
 		// combinational: 버스 중재 및 신호 라우팅
 		void refresh(void);
+
+	private:
+		// I-Cache 3바이트 버스트가 D-Cache 요청에 의해 중간에 끊기면
+		// 메인 메모리 버스트도 처음부터 다시 시작되어 명령어가 깨진다.
+		// 한 번 I-Cache에 버스를 내주면 ic_re가 내려갈 때까지 유지한다.
+		bool ic_busy_{false};
 	};
 }

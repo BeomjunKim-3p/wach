@@ -12,8 +12,8 @@
 //   10 = JRP/JALR (R[WRS] + JRP imme)
 //   11 = JA-Type  (0x0000 + JA imme, absolute)
 //
-// JALR(is_jalr=1)은 jump_type=10으로 처리 (JRP와 동일 경로)
-// JRP imme는 ID 단 ImmGen에서 공급
+// JRP/JALR(is_jalr=1)은 ID 단에서 jump_type=10으로 처리
+// JRP imme와 WRS 데이터는 ID 단에서 공급
 
 namespace thpg::wa824 {
 	class FlowController : public sc_module {

@@ -4,7 +4,8 @@
 // Control Unit — LUT
 // 입력: inst[23:0] (opcode[3:0], funct[23:20] 사용)
 // 출력: ctrl[11:0]
-//   [0]    addr2_sel  : 0=inst[15:12](RS1용), 1=inst[7:4](RS2/S-type)
+//   [0]    addr2_sel  : 0=inst[15:12](R-Type RS2 / immediate low nibble),
+//                       1=inst[7:4](B/S-Type RS2)
 //   [1]    addr3_sel  : 0=inst[11:8],         1=inst[23:20](JRP wrs)
 //   [2]    alu_b_sel  : 0=R[RS2],             1=IMME
 //   [3]    imme_sel   : 0=I-Type imme,        1=L&S-Type imme

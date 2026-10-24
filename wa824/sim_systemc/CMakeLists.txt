@@ -1,11 +1,17 @@
 cmake_minimum_required(VERSION 3.21)
 project(WA824 CXX)
+
+# SystemC and the project libraries share BUILD_SHARED_LIBS so they are
+# always built in the same form. Override with -DBUILD_SHARED_LIBS=OFF.
+option(BUILD_SHARED_LIBS "Build shared libraries." ON)
+
 add_library(WA824 INTERFACE)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 cmake_policy(SET CMP0135 NEW)
+set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 
 enable_testing()
 
@@ -19,9 +25,10 @@ set(COMPONENT_MODULES "" CACHE STRING "Select Architecture Component Modules")
 set(ALLOWED_COMPONENT_LIST "")
 set(INVALID_COMPONENTS "")
 
-set(TESTBENCH_MODULE "" CACHE STRING "Select Testbench Module")
-set(ALLOWED_TESTBENCH_MODULES "")
-set_property(CACHE CORE_MODULE PROPERTY STRINGS ${ALLOWED_TESTBENCH_MODULE})
+set(DEFAULT_TESTBENCH_MODULE "SimpleDebuger")
+set(TESTBENCH_MODULE "${DEFAULT_TESTBENCH_MODULE}" CACHE STRING "Select Testbench Module")
+set(ALLOWED_TESTBENCH_MODULES "SimpleDebuger")
+set_property(CACHE TESTBENCH_MODULE PROPERTY STRINGS ${ALLOWED_TESTBENCH_MODULES})
 
 string(STRIP "${CORE_MODULE}" CORE_MODULE)
 if("${CORE_MODULE}" STREQUAL "")
@@ -75,7 +82,6 @@ endforeach()
 # 테스트벤치 모듈
 if(TESTBENCH_MODULE)
 	add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/testbench/${TESTBENCH_MODULE}")
-	target_compile_definitions(WA824 INTERFACE "USE_TESTBENCH")
 endif()
 
 include(FetchContent)

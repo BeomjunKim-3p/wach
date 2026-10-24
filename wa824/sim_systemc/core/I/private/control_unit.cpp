@@ -94,7 +94,7 @@ void thpg::wa824::ControlUnit::refresh(void)
 
 		case 0x4: // B-Type: BEQ BNE BLT BLTU
 			if (funct > 0x3) { valid = false; break; }
-			addr2_sel = 0;
+			addr2_sel = 1;  // RS2는 inst[7:4], offset[3:0]은 inst[15:12]
 			addr3_sel = 0;
 			alu_b_sel = 0;
 			imme_sel  = 0;
