@@ -8,7 +8,7 @@ thpg::primitive::RegisterREdge<N>::RegisterREdge(sc_module_name name, sc_trace_f
 	SC_METHOD(write);
 	sensitive << clk.pos();
 	
-	std::string module_name = std::string(this->name()) + "(RegisterREdgeN" + std::to_string(N) + ")"
+	std::string module_name = std::string(this->name()) + "(RegisterREdgeN" + std::to_string(N) + ")";
 
 	if (tf) {
 		sc_trace(tf, cs, (module_name + ".CS").c_str());
@@ -44,12 +44,15 @@ template <int N>
 void thpg::primitive::RegisterREdge<N>::write(void)
 {
 	[&]{
-		if (cs.read() != SC_LOGIC_1) return;
-		if (wr_bar.read() != SC_LOGIC_1) return;
+		// reset은 cs/wr_bar 상태와 무관하게 레지스터 내용을 0으로 만든다.
+		// (cs가 0인 동안 alwaysout이 초기값 X로 남는 문제 방지)
 		if (reset.read() == true) {
 			register_data = 0;
+			alwaysout.write(sc_lv<N>(0));
 			return;
 		}
+		if (cs.read() != SC_LOGIC_1) return;
+		if (wr_bar.read() != SC_LOGIC_1) return;
 
 		// 칩선택 && write상태 && rising edge
 		register_data = data.read();

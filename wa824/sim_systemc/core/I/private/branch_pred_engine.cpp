@@ -22,7 +22,7 @@ void thpg::wa824::BPE::refresh(void)
 		return;
 	}
 
-	unsigned int opcode = inst.read().range(3, 0).to_uint();
+	unsigned int opcode = ((inst.read().to_uint() >> 4) & 0x0F);
 
 	// B-Type 아니면 not-taken
 	if (opcode != 0x4) {
@@ -30,11 +30,10 @@ void thpg::wa824::BPE::refresh(void)
 		return;
 	}
 
-	// BTFNT: imm = {inst[19:16], inst[15:12]}
-	// 부호비트 = inst[19], imm == 0x00 도 backward 취급
-	unsigned int imm = (inst.read().range(19, 16).to_uint() << 4)
-	                 |  inst.read().range(15, 12).to_uint();
+	unsigned int imm = (((inst.read().to_uint() >> 20) & 0x0F) << 4) |
+	                   ((inst.read().to_uint() >> 8) & 0x0F);
 
-	bool backward = (inst.read()[19] == SC_LOGIC_1) || (imm == 0x00);
+	// imm[7] == inst[23] (부호 비트)
+	bool backward = ((imm & 0x80u) != 0u) || (imm == 0x00u);
 	branch_pred_result.write(backward);
 }

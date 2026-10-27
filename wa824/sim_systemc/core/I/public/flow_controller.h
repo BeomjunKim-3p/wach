@@ -23,7 +23,7 @@ namespace thpg::wa824 {
 		sc_in<bool>      is_jalr    {"IS_JALR"};
 
 		// 오프셋 출력 (PC ADDER 입력 mux로)
-		sc_out<sc_lv<8>>  b_offset  {"B_OFFSET"};   // B-Type:  {inst[19:16], inst[15:12]}
+		sc_out<sc_lv<8>>  b_offset  {"B_OFFSET"};   // B-Type:  {inst[23:20], inst[11:8]}
 		sc_out<sc_lv<16>> jr_imme   {"JR_IMME"};    // JR-Type: {inst[23:16], inst[15:8]}
 		sc_out<sc_lv<16>> ja_imme   {"JA_IMME"};    // JA-Type: {inst[23:16], inst[15:8]} (동일 비트, 별도 출력)
 

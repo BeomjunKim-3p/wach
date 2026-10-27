@@ -14,10 +14,16 @@ thpg::wa824::DCache::DCache(sc_module_name name, sc_trace_file *tf)
 	wb_data_buf = 0;
 
 	SC_METHOD(refresh_read);
-	sensitive << addr << mem_read << mem_write << wdata;
+	sensitive << reset << addr << mem_read << mem_write << wdata << fill_done_
+	          << invalidate_event_;
 
 	SC_METHOD(refresh_wb);
 	sensitive << clk.pos();
+
+	SC_METHOD(refresh_output);
+	sensitive << reset << req_we << req_re << req_addr << req_wdata
+	          << wb_active << wb_we << wb_re << wb_addr << wb_wdata
+	          << invalidate_event_;
 
 	if (tf) {
 		std::string mn = std::string(this->name()) + "(DCache)";
@@ -40,10 +46,16 @@ thpg::wa824::DCache::DCache(sc_module_name name, sc_trace_file *tf)
 void thpg::wa824::DCache::refresh_read(void)
 {
 	// 기본값: 요청 없음
-	dc_re.write(false);
-	dc_we.write(false);
-	dc_addr.write(sc_lv<16>(SC_LOGIC_Z));
-	dc_wdata.write(sc_lv<8>(SC_LOGIC_Z));
+	req_we.write(false);
+	req_re.write(false);
+	req_addr.write(sc_lv<16>(SC_LOGIC_Z));
+	req_wdata.write(sc_lv<8>(SC_LOGIC_Z));
+
+	if (reset.read()) {
+		hit.write(false);
+		rdata.write(sc_lv<8>(SC_LOGIC_Z));
+		return;
+	}
 
 	if (!addr.read().is_01()) {
 		hit.write(false);
@@ -71,11 +83,9 @@ void thpg::wa824::DCache::refresh_read(void)
 		} else {
 			hit.write(false);
 			rdata.write(sc_lv<8>(SC_LOGIC_X));
-			// write-back 대기 중이면 wb 먼저, 아니면 바로 fetch
-			if (!wb_pending) {
-				dc_re.write(true);
-				dc_addr.write(sc_lv<16>(a));
-			}
+			// WB가 진행 중이면 refresh_output이 wb_*를 우선한다.
+			req_re.write(true);
+			req_addr.write(sc_lv<16>(a));
 		}
 		return;
 	}
@@ -89,10 +99,8 @@ void thpg::wa824::DCache::refresh_read(void)
 			// write miss: write-allocate → fetch 필요
 			hit.write(false);
 			rdata.write(sc_lv<8>(SC_LOGIC_Z));
-			if (!wb_pending) {
-				dc_re.write(true);
-				dc_addr.write(sc_lv<16>(a));
-			}
+			req_re.write(true);
+			req_addr.write(sc_lv<16>(a));
 		}
 	}
 }
@@ -106,10 +114,44 @@ void thpg::wa824::DCache::refresh_wb(void)
 			dirty[i]      = false;
 			data_store[i] = 0;
 		}
-		wb_pending  = false;
-		dc_we.write(false);
-		dc_re.write(false);
+		wb_pending = false;
+		wb_cancel_valid = false;
+		wb_cancel_all   = false;
+		wb_active.write(false);
+		wb_we.write(false);
+		wb_re.write(false);
+		wb_addr.write(sc_lv<16>(SC_LOGIC_Z));
+		wb_wdata.write(sc_lv<8>(SC_LOGIC_Z));
 		return;
+	}
+
+	// 디버그 무효화로 취소된 write-back은 메모리에 쓰지 않고 버린다.
+	// refresh_output은 invalidate_event_ 직후부터 wb_* 요청을 억제하므로,
+	// 다음 클럭 전에 메인 메모리가 이전 값을 덮어쓰는 일도 없다.
+	if (wb_cancel_all) {
+		wb_pending      = false;
+		wb_cancel_all   = false;
+		wb_cancel_valid = false;
+		wb_active.write(false);
+		wb_we.write(false);
+		wb_re.write(false);
+		wb_addr.write(sc_lv<16>(SC_LOGIC_Z));
+		wb_wdata.write(sc_lv<8>(SC_LOGIC_Z));
+		return;
+	}
+	if (wb_cancel_valid) {
+		const bool cancelled = wb_pending &&
+		    ((wb_addr_buf.to_uint() & 0xFFu) == wb_cancel_idx.to_uint());
+		wb_cancel_valid = false;
+		if (cancelled) {
+			wb_pending = false;
+			wb_active.write(false);
+			wb_we.write(false);
+			wb_re.write(false);
+			wb_addr.write(sc_lv<16>(SC_LOGIC_Z));
+			wb_wdata.write(sc_lv<8>(SC_LOGIC_Z));
+			return;
+		}
 	}
 
 	if (!addr.read().is_01()) return;
@@ -132,14 +174,23 @@ void thpg::wa824::DCache::refresh_wb(void)
 	if (wb_pending) {
 		if (!dc_grant.read()) return; // 아직 중재기 grant 안 됨
 		if (!dc_ready.read()) return; // 메모리 아직 처리 중
-		// write-back 완료
+		// write-back 완료. 다음 요청(fetch)은 refresh_read가 req_re로
+		// 계속 만들고 있으므로 wb override를 해제한다.
 		wb_pending = false;
-		dc_we.write(false);
-		// 이제 fetch 시작
-		dc_re.write(true);
-		dc_addr.write(sc_lv<16>(a));
+		wb_active.write(false);
+		wb_we.write(false);
+		wb_re.write(false);
+		wb_addr.write(sc_lv<16>(SC_LOGIC_Z));
+		wb_wdata.write(sc_lv<8>(SC_LOGIC_Z));
 		return;
 	}
+
+	// WB override가 남아 있지 않도록 기본값으로 되돌린다.
+	wb_active.write(false);
+	wb_we.write(false);
+	wb_re.write(false);
+	wb_addr.write(sc_lv<16>(SC_LOGIC_Z));
+	wb_wdata.write(sc_lv<8>(SC_LOGIC_Z));
 
 	// ── miss + grant + ready: fill ──────────────────────────
 	if (!tag_hit && (mem_read.read() || mem_write.read())) {
@@ -154,11 +205,12 @@ void thpg::wa824::DCache::refresh_wb(void)
 			wb_data_buf = data_store[idx];
 			wb_pending  = true;
 			dirty[idx]  = false;
-			// write-back 발행
-			dc_we.write(true);
-			dc_re.write(false);
-			dc_addr.write(sc_lv<16>(wb_addr_buf.to_uint()));
-			dc_wdata.write(sc_lv<8>(wb_data_buf));
+			// write-back 발행 (refresh_output이 dc_*를 구동)
+			wb_active.write(true);
+			wb_we.write(true);
+			wb_re.write(false);
+			wb_addr.write(sc_lv<16>(wb_addr_buf.to_uint()));
+			wb_wdata.write(sc_lv<8>(wb_data_buf));
 			return;
 		}
 
@@ -166,12 +218,68 @@ void thpg::wa824::DCache::refresh_wb(void)
 		data_store[idx] = dc_rdata.read().to_uint();
 		tag_store[idx]  = (1 << 8) | tag;
 		dirty[idx]      = false;
-		dc_re.write(false);
 
 		// write-allocate: fill 후 write 요청 있으면 캐시에 기록
 		if (mem_write.read() && wdata.read().is_01()) {
 			data_store[idx] = wdata.read().to_uint();
 			dirty[idx]      = true;
 		}
+		// addr가 그대로여도 refresh_read가 새 tag로 hit을 재평가해야 한다.
+		fill_done_.notify(SC_ZERO_TIME);
 	}
+}
+
+void thpg::wa824::DCache::refresh_output(void)
+{
+	if (wb_active.read()) {
+		// 무효화된 라인의 write-back이면 메모리 요청을 내리지 않는다.
+		if (wb_cancel_all ||
+		    (wb_cancel_valid &&
+		     ((wb_addr_buf.to_uint() & 0xFFu) == wb_cancel_idx.to_uint()))) {
+			dc_addr.write(sc_lv<16>(SC_LOGIC_Z));
+			dc_wdata.write(sc_lv<8>(SC_LOGIC_Z));
+			dc_we.write(false);
+			dc_re.write(false);
+			return;
+		}
+		dc_addr.write(wb_addr.read());
+		dc_wdata.write(wb_wdata.read());
+		dc_we.write(wb_we.read());
+		dc_re.write(wb_re.read());
+	} else {
+		dc_addr.write(req_addr.read());
+		dc_wdata.write(req_wdata.read());
+		dc_we.write(req_we.read());
+		dc_re.write(req_re.read());
+	}
+}
+
+void thpg::wa824::DCache::invalidate_line(uint16_t addr)
+{
+	const unsigned int idx = addr & 0xFFu;
+
+	tag_store[idx]  = 0;
+	dirty[idx]      = false;
+	data_store[idx] = 0;
+
+	if (wb_pending && ((wb_addr_buf.to_uint() & 0xFFu) == idx)) {
+		wb_cancel_valid = true;
+		wb_cancel_idx   = idx;
+	}
+
+	invalidate_event_.notify(SC_ZERO_TIME);
+}
+
+void thpg::wa824::DCache::invalidate_all(void)
+{
+	for (int i = 0; i < 256; ++i) {
+		tag_store[i]  = 0;
+		dirty[i]      = false;
+		data_store[i] = 0;
+	}
+
+	if (wb_pending) wb_cancel_all = true;
+	wb_cancel_valid = false;
+
+	invalidate_event_.notify(SC_ZERO_TIME);
 }

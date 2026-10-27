@@ -6,8 +6,6 @@ set_target_properties(primitive PROPERTIES
 	CXX_SCAN_FOR_MODULES ON
 )
 
-add_subdirectory(test)
-
 target_sources(primitive
 	PUBLIC
 		FILE_SET CXX_MODULES
@@ -27,4 +25,10 @@ target_sources(primitive
 
 target_link_libraries(primitive PUBLIC WA824)
 
+add_subdirectory(test)
 
+install(TARGETS primitive
+	RUNTIME DESTINATION bin
+	LIBRARY DESTINATION lib
+	ARCHIVE DESTINATION lib
+)

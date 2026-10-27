@@ -38,26 +38,14 @@ void thpg::wa824::MemArbiter::refresh(void)
 	bool dc_wants = dc_re.read() || dc_we.read();
 	bool ic_wants = ic_re.read();
 
-	if (dc_wants) {
-		// ── D-Cache 우선 ─────────────────────────────────────
-		dc_grant.write(true);
-		ic_grant.write(false);
+	// I-Cache 버스트 락: 한 번 I-Cache에 grant하면 ic_re가 내려갈 때까지
+	// D-Cache가 새치기하지 못하게 한다.
+	if (!ic_wants) ic_busy_ = false;
+	bool grant_ic = ic_wants && (ic_busy_ || !dc_wants);
 
-		mem_addr.write(dc_addr.read());
-		mem_wdata.write(dc_wdata.read());
-		mem_we.write(dc_we.read());
-		mem_re.write(dc_re.read());
-
-		// D-Cache에 메모리 응답 전달
-		dc_rdata.write(mem_rdata.read());
-		dc_ready.write(mem_ready.read());
-
-		// I-Cache: 대기 (ready=0, rdata=X)
-		ic_rdata.write(sc_lv<8>(SC_LOGIC_Z));
-		ic_ready.write(false);
-
-	} else if (ic_wants) {
+	if (grant_ic) {
 		// ── I-Cache 처리 ─────────────────────────────────────
+		ic_busy_ = true;
 		ic_grant.write(true);
 		dc_grant.write(false);
 
@@ -75,6 +63,24 @@ void thpg::wa824::MemArbiter::refresh(void)
 		// D-Cache: 요청 없음
 		dc_rdata.write(sc_lv<8>(SC_LOGIC_Z));
 		dc_ready.write(false);
+
+	} else if (dc_wants) {
+		// ── D-Cache 우선 ─────────────────────────────────────
+		dc_grant.write(true);
+		ic_grant.write(false);
+
+		mem_addr.write(dc_addr.read());
+		mem_wdata.write(dc_wdata.read());
+		mem_we.write(dc_we.read());
+		mem_re.write(dc_re.read());
+
+		// D-Cache에 메모리 응답 전달
+		dc_rdata.write(mem_rdata.read());
+		dc_ready.write(mem_ready.read());
+
+		// I-Cache: 대기 (ready=0, rdata=X)
+		ic_rdata.write(sc_lv<8>(SC_LOGIC_Z));
+		ic_ready.write(false);
 
 	} else {
 		// ── 요청 없음 ─────────────────────────────────────────

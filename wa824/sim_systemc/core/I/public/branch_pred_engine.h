@@ -2,7 +2,7 @@
 #include <systemc.h>
 
 // Branch Prediction Engine — BTFNT (Backward Taken, Forward Not Taken)
-// B-Type(opcode=0x4)이면 imm 부호비트(inst[19]) == 1 이거나 imm == 0x00 이면 taken
+// B-Type(opcode=0x4)이면 imm 부호비트(inst[23]) == 1 이거나 imm == 0x00 이면 taken
 // 나머지 opcode → not-taken
 
 namespace thpg::wa824 {

@@ -31,23 +31,19 @@ void thpg::wa824::FlowController::refresh_imme(void)
 		return;
 	}
 
-	// B-Type offset: {inst[19:16], inst[15:12]}
-	sc_lv<8> b;
-	b.range(3, 0) = inst.read().range(15, 12);
-	b.range(7, 4) = inst.read().range(19, 16);
-	b_offset.write(b);
+
+	// B-Type offset: {inst[23:20], inst[11:8]}
+	b_offset.write(sc_lv<8>((((inst.read().to_uint() >> 20) & 0x0F) << 4) | ((inst.read().to_uint() >> 8) & 0x0F)));
 
 	// JR/JA-Type imme: {inst[23:16], inst[15:8]} — 동일 비트, 별도 출력
-	sc_lv<16> jrimm;
-	jrimm.range(7,  0) = inst.read().range(15, 8);
-	jrimm.range(15, 8) = inst.read().range(23, 16);
-	jr_imme.write(jrimm);
-	ja_imme.write(jrimm);
+	ja_imme.write(sc_lv<16>(((inst.read() >> 16) & 0xFF) << 8 | ((inst.read() >> 8) & 0xFF)));
+	jr_imme.write(sc_lv<16>(((inst.read() >> 16) & 0xFF) << 8 | ((inst.read() >> 8) & 0xFF)));
 }
 
 void thpg::wa824::FlowController::refresh_jump_type(void)
 {
-	// JALR(is_jalr=1): JRP와 동일 경로 (R[WRS]+imme) → jump_type=10
+	// JRP/JALR(is_jalr=1): ID단에서 R[WRS]+imme 경로 선택 → jump_type=10
+	// is_jalr은 IF/ID의 opcode 0x7에서 조합적으로 생성된다.
 	if (is_jalr.read()) {
 		jump_type.write(sc_lv<2>("10"));
 		return;
@@ -58,13 +54,14 @@ void thpg::wa824::FlowController::refresh_jump_type(void)
 		return;
 	}
 
-	unsigned int opcode = inst.read().range(3, 0).to_uint();
+	unsigned int opcode = ((inst.read().to_uint() >> 4) & 0x0F);
 
 	switch (opcode) {
 		case 0x4: jump_type.write(sc_lv<2>("00")); break; // branch or normal
 		case 0x5: jump_type.write(sc_lv<2>("11")); break; // JA (absolute)
 		case 0x6: jump_type.write(sc_lv<2>("01")); break; // JR (relative)
-		case 0x7: jump_type.write(sc_lv<2>("10")); break; // JRP
+		// JRP/JALR(0x7)은 RF 의존이라 IF에서 jump_type=10을 만들지 않는다.
+		// ID의 is_jalr 입력이 10을 선택한다.
 		default:  jump_type.write(sc_lv<2>("00")); break; // 순차
 	}
 }

@@ -21,8 +21,8 @@ void thpg::wa824::ControlUnit::refresh(void)
 		return;
 	}
 
-	unsigned int opcode = inst.read().range(3,  0).to_uint();
-	unsigned int funct  = inst.read().range(23, 20).to_uint();
+	unsigned int opcode = ((inst.read().to_uint() >> 4) & 0x0F);
+	unsigned int funct  = ((inst.read().to_uint() >> 16) & 0x0F);
 
 	// 필드별 초기값 (safe default: 모든 write/read 비활성)
 	unsigned int addr2_sel = 0;
@@ -68,7 +68,7 @@ void thpg::wa824::ControlUnit::refresh(void)
 
 		case 0x2: // L-Type: LB
 			addr2_sel = 0;
-			addr3_sel = 1;  // wrs at inst[23:20]
+			addr3_sel = 0;  // WRS = inst[15:13]
 			alu_b_sel = 1;
 			imme_sel  = 1;  // L&S imme
 			alu_funct = 0x0; // ADD
@@ -80,8 +80,8 @@ void thpg::wa824::ControlUnit::refresh(void)
 			break;
 
 		case 0x3: // S-Type: SB
-			addr2_sel = 1;  // rs at inst[7:4]
-			addr3_sel = 1;  // wrs at inst[23:20]
+			addr2_sel = 1;  // store data RS = inst[3:0]
+			addr3_sel = 0;  // WRS = inst[15:13]
 			alu_b_sel = 1;
 			imme_sel  = 1;
 			alu_funct = 0x0; // ADD
@@ -94,7 +94,7 @@ void thpg::wa824::ControlUnit::refresh(void)
 
 		case 0x4: // B-Type: BEQ BNE BLT BLTU
 			if (funct > 0x3) { valid = false; break; }
-			addr2_sel = 1;  // RS2는 inst[7:4], offset[3:0]은 inst[15:12]
+			addr2_sel = 1;  // RS2 = inst[3:0]
 			addr3_sel = 0;
 			alu_b_sel = 0;
 			imme_sel  = 0;
@@ -134,7 +134,7 @@ void thpg::wa824::ControlUnit::refresh(void)
 
 		case 0x7: // JRP-Type: JALR
 			addr2_sel = 0;
-			addr3_sel = 1;  // wrs at inst[23:20]
+			addr3_sel = 1;  // WRS = inst[19:17]
 			alu_b_sel = 0;
 			imme_sel  = 0;
 			alu_funct = 0x0;
