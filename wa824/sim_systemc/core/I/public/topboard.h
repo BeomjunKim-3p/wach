@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TOPBOARD
+#define TOPBOARD
 #include <systemc.h>
 
 #include <cstdint>
@@ -54,6 +55,14 @@ public:
 	// ── 외부 포트 ────────────────────────────────────────────
 	sc_in<bool>       clk  {"CLK"};
 	sc_in<bool>       reset{"RESET"};
+
+	// ── 외부에서 설정하는 MMIO 영역/정책 ────────────────────
+	// CSR 없이 testbench/플랫폼 컨트롤러가 직접 설정한다.
+	//   is_mmio = enable && ((addr & mask) == (base & mask))
+	sc_in<bool>       mmio_enable  {"MMIO_ENABLE"};
+	sc_in<sc_lv<16>>  mmio_base    {"MMIO_BASE"};
+	sc_in<sc_lv<16>>  mmio_mask    {"MMIO_MASK"};
+	sc_in<bool>       mmio_ordered {"MMIO_ORDERED"};
 
 	// ── 디버그용 캐시 무효화 핀 ──────────────────────────────
 	// 테스트벤치가 메인 메모리를 수정한 뒤 해당 라인 또는 전체 캐시를
@@ -235,6 +244,7 @@ private:
 	sc_signal<sc_lv<8>>  arb_dc_wdata {"arb_dc_wdata"};
 	sc_signal<bool>      arb_dc_we    {"arb_dc_we"};
 	sc_signal<bool>      arb_dc_re    {"arb_dc_re"};
+	sc_signal<bool>      arb_dc_urgent{"arb_dc_urgent"};
 	sc_signal<sc_lv<8>>  arb_dc_rdata {"arb_dc_rdata"};
 	sc_signal<bool>      arb_dc_ready {"arb_dc_ready"};
 	sc_signal<bool>      arb_dc_grant {"arb_dc_grant"};
@@ -265,3 +275,5 @@ private:
 };
 
 } // namespace thpg::wa824
+
+#endif 

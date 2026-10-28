@@ -13,7 +13,6 @@ void DebugCollector::collect_id(Topboard &top, DebugSnapshot &snapshot)
 	add(snapshot, "ImmGen", "inst",     lv_hex(top.immgen.inst.read(), 6));
 	add(snapshot, "ImmGen", "imme_i",   lv_hex(top.immgen.imme_i.read(), 2));
 	add(snapshot, "ImmGen", "imme_ls",  lv_hex(top.immgen.imme_ls.read(), 3));
-	add(snapshot, "ImmGen", "imme_ja",  lv_hex(top.immgen.imme_ja.read(), 4));
 	add(snapshot, "ImmGen", "imme_jrp", lv_hex(top.immgen.imme_jrp.read(), 3));
 
 	add(snapshot, "RegisterFile", "rs1_addr",  lv_hex(top.regfile.rs1_addr.read(), 1));

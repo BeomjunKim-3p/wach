@@ -17,11 +17,18 @@ void DebugCollector::collect_mem(Topboard &top, DebugSnapshot &snapshot)
 	add(snapshot, "DCache", "dc_wdata",  lv_hex(top.dcache.dc_wdata.read(), 2));
 	add(snapshot, "DCache", "dc_we",     bool_str(top.dcache.dc_we.read()));
 	add(snapshot, "DCache", "dc_re",     bool_str(top.dcache.dc_re.read()));
+	add(snapshot, "DCache", "dc_urgent", bool_str(top.dcache.dc_urgent.read()));
 	add(snapshot, "DCache", "dc_rdata",  lv_hex(top.dcache.dc_rdata.read(), 2));
 	add(snapshot, "DCache", "dc_ready",  bool_str(top.dcache.dc_ready.read()));
 	add(snapshot, "DCache", "dc_grant",  bool_str(top.dcache.dc_grant.read()));
 	add(snapshot, "DCache", "int_req",   bool_str(top.dc_mem_read.read()));
 	add(snapshot, "DCache", "int_we",    bool_str(top.dc_mem_write.read()));
+	add(snapshot, "DCache", "wb_count",  udec(top.dcache.write_buffer_count()));
+	add(snapshot, "DCache", "wb_depth",  udec(top.dcache.write_buffer_depth()));
+	add(snapshot, "DCache", "mmio_enable",  bool_str(top.mmio_enable.read()));
+	add(snapshot, "DCache", "mmio_base",    lv_hex(top.mmio_base.read(), 4));
+	add(snapshot, "DCache", "mmio_mask",    lv_hex(top.mmio_mask.read(), 4));
+	add(snapshot, "DCache", "mmio_ordered", bool_str(top.mmio_ordered.read()));
 
 	add(snapshot, "MemArbiter", "mem_addr",  lv_hex(top.mem_arbiter.mem_addr.read(), 4));
 	add(snapshot, "MemArbiter", "mem_wdata", lv_hex(top.mem_arbiter.mem_wdata.read(), 2));

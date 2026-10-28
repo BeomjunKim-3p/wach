@@ -3,7 +3,12 @@
 
 // Memory Arbiter
 // I-Cache와 D-Cache의 메인 메모리 접근 충돌 중재
-// 우선순위: D-Cache > I-Cache (단, I-Cache 3바이트 버스트 중에는 I-Cache 유지)
+// 우선순위:
+//   1. 진행 중인 I-Cache 3바이트 burst (중간에 끊기면 안 됨)
+//   2. D-Cache urgent (MMIO / MMIO-ordered drain)
+//   3. D-Cache read (load miss fill)
+//   4. I-Cache fetch
+//   5. D-Cache background write (write buffer drain)
 //
 // 메인 메모리 인터페이스 (외부):
 //   mem_addr, mem_wdata, mem_we, mem_re → 메인 메모리
@@ -18,8 +23,8 @@
 //   dc_rdata, dc_ready, dc_valid    ← arbiter
 //
 // 동작:
-//   D-Cache 요청 있으면 우선 처리, I-Cache는 grant=0으로 대기
-//   D-Cache 요청 없으면 I-Cache 처리
+//   I-Cache burst 락이 없으면 urgent/read D-Cache 요청을 우선 처리
+//   D-Cache background write는 I-Cache fetch보다 낮은 우선순위
 //   mem_ready=0이면 현재 요청자에게 ready=0 전달 (wait 상태)
 //   grant 변경 시 이전 트랜잭션 완료 후 전환 (mem_ready 기준)
 
@@ -46,6 +51,7 @@ namespace thpg::wa824 {
 		sc_in<sc_lv<8>>   dc_wdata {"DC_WDATA"};
 		sc_in<bool>       dc_we    {"DC_WE"};     // D-Cache write 요청
 		sc_in<bool>       dc_re    {"DC_RE"};     // D-Cache read 요청
+		sc_in<bool>       dc_urgent{"DC_URGENT"}; // MMIO/drain barrier 등 우선 요청
 		sc_out<sc_lv<8>>  dc_rdata {"DC_RDATA"};
 		sc_out<bool>      dc_ready {"DC_READY"};  // 1=dc_rdata 유효 또는 write 완료
 		sc_out<bool>      dc_grant {"DC_GRANT"};  // 1=버스 사용 권한 있음

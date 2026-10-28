@@ -9,7 +9,7 @@ namespace thpg::wa824 {
 	class BPE : public sc_module {
 	public:
 		sc_in<sc_lv<24>> inst  {"INST"};
-		sc_in<sc_lv<16>> pc   {"PC"};   // 다이어그램상 연결됨, 추후 활용
+		sc_in<sc_lv<16>> pc   {"PC"};   // 다이어그램상 연결됨, 추후 분기 예측 알고리즘 업그레이드시 활용
 
 		sc_out<bool> branch_pred_result{"BRANCH_PRED_RESULT"};
 

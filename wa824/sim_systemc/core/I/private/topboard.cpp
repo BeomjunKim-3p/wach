@@ -114,10 +114,15 @@ thpg::wa824::Topboard::Topboard(sc_module_name name, sc_trace_file *tf)
 	dcache.hit      (dc_hit_sig);
 	dcache.clk      (clk);
 	dcache.reset    (reset);
+	dcache.mmio_enable (mmio_enable);
+	dcache.mmio_base   (mmio_base);
+	dcache.mmio_mask   (mmio_mask);
+	dcache.mmio_ordered(mmio_ordered);
 	dcache.dc_addr  (arb_dc_addr);
 	dcache.dc_wdata (arb_dc_wdata);
 	dcache.dc_we    (arb_dc_we);
 	dcache.dc_re    (arb_dc_re);
+	dcache.dc_urgent(arb_dc_urgent);
 	dcache.dc_rdata (arb_dc_rdata);
 	dcache.dc_ready (arb_dc_ready);
 	dcache.dc_grant (arb_dc_grant);
@@ -138,6 +143,7 @@ thpg::wa824::Topboard::Topboard(sc_module_name name, sc_trace_file *tf)
 	mem_arbiter.dc_wdata (arb_dc_wdata);
 	mem_arbiter.dc_we    (arb_dc_we);
 	mem_arbiter.dc_re    (arb_dc_re);
+	mem_arbiter.dc_urgent(arb_dc_urgent);
 	mem_arbiter.dc_rdata (arb_dc_rdata);
 	mem_arbiter.dc_ready (arb_dc_ready);
 	mem_arbiter.dc_grant (arb_dc_grant);
@@ -166,7 +172,6 @@ thpg::wa824::Topboard::Topboard(sc_module_name name, sc_trace_file *tf)
 	immgen.imme_i  (immgen_i);
 	immgen.imme_b  (immgen_b);
 	immgen.imme_ls (immgen_ls);
-	immgen.imme_ja (immgen_ja);
 	immgen.imme_jrp(immgen_jrp);
 
 	// ── RegisterFile 연결 ─────────────────────────────────────
