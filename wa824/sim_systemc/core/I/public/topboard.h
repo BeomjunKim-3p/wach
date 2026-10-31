@@ -87,6 +87,10 @@ public:
 	// 디버거용 전체 상태 스냅샷
 	DebugSnapshot capture_debug(void);
 
+	// 디버거용 메모리 peek. D-Cache의 pending write buffer와 cache line을
+	// 먼저 확인하고, 없으면 false를 돌려준다. 시뮬레이션 시간은 진행하지 않는다.
+	bool debug_read_byte(uint16_t address, uint8_t &value) const;
+
 	// ── tick: 파이프라인 레지스터 (clk.pos()) ────────────────
 	void tick_debug(void);
 	void tick_pc(void);

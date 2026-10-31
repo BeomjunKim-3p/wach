@@ -68,6 +68,26 @@ bool thpg::wa824::DCache::wb_lookup(uint16_t a, sc_uint<8> &data) const
 	return false;
 }
 
+bool thpg::wa824::DCache::debug_peek_byte(uint16_t a, uint8_t &value) const
+{
+	if (is_mmio(a)) return false;
+
+	sc_uint<8> queued;
+	if (wb_lookup(a, queued)) {
+		value = static_cast<uint8_t>(queued.to_uint());
+		return true;
+	}
+
+	const unsigned int idx = a & 0xFFu;
+	const unsigned int tag = (a >> 8) & 0xFFu;
+	const bool valid = tag_store[idx][8].to_bool();
+	if (valid && (tag_store[idx].range(7, 0) == sc_uint<8>(tag))) {
+		value = static_cast<uint8_t>(data_store[idx].to_uint());
+		return true;
+	}
+	return false;
+}
+
 void thpg::wa824::DCache::wb_push(uint16_t a, uint8_t data)
 {
 	if (wb_count >= WB_DEPTH) return;

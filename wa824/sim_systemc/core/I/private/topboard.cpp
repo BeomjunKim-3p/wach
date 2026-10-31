@@ -275,6 +275,11 @@ void thpg::wa824::Topboard::debug_invalidate(void)
 	}
 }
 
+bool thpg::wa824::Topboard::debug_read_byte(uint16_t address, uint8_t &value) const
+{
+	return dcache.debug_peek_byte(address, value);
+}
+
 void thpg::wa824::Topboard::tick_pc(void)
 {
 	if (reset.read()) {

@@ -58,6 +58,11 @@ namespace thpg::wa824 {
 		unsigned int write_buffer_count(void) const { return wb_count; }
 		unsigned int write_buffer_depth(void) const { return WB_DEPTH; }
 
+		// 디버거가 시뮬레이션 시간을 진행시키지 않고 현재 보이는 값을 읽는다.
+		// pending store -> cache hit 순서로 찾고, 둘 다 없으면 false를 돌려준다.
+		// MMIO 영역은 cache/write buffer를 사용하지 않으므로 항상 false다.
+		bool debug_peek_byte(uint16_t addr, uint8_t &value) const;
+
 	private:
 		static constexpr unsigned int WB_DEPTH = 8;
 
